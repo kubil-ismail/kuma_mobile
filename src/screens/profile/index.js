@@ -1,18 +1,18 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import {
-  Container,
-  Body,
-  Left,
   Button,
-  Icon,
+  Body,
+  Container,
   Content,
-  Thumbnail,
+  Left,
   List,
   ListItem,
+  Thumbnail,
   Text,
   View,
 } from 'native-base';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import { StyleSheet } from 'react-native';
 import profile from '../../assets/image/icon.png';
 
@@ -24,7 +24,7 @@ export default class Profile extends Component {
           <Content>
             <View style={profileStyle.head}>
               <Thumbnail large source={profile} />
-              <Text style={profileStyle.title}>Profile Name</Text>
+              <Text style={profileStyle.title}>Bilkis Ismail</Text>
               <Text style={profileStyle.desc}>lorem ipsum sir dolor amet lorem ipsum sir dolor amet lorem ipsum sir dolor amet</Text>
             </View>
             <List>
@@ -33,8 +33,8 @@ export default class Profile extends Component {
               </ListItem>
               <ListItem icon>
                 <Left>
-                  <Button>
-                    <Icon active name="paper-plane" />
+                  <Button info>
+                    <Icon solid style={profileStyle.icon} name="envelope" />
                   </Button>
                 </Left>
                 <Body>
@@ -43,8 +43,8 @@ export default class Profile extends Component {
               </ListItem>
               <ListItem icon>
                 <Left>
-                  <Button>
-                    <Icon active name="paper-plane" />
+                  <Button info>
+                    <Icon solid style={profileStyle.icon} name="birthday-cake" />
                   </Button>
                 </Left>
                 <Body>
@@ -53,8 +53,8 @@ export default class Profile extends Component {
               </ListItem>
               <ListItem icon>
                 <Left>
-                  <Button>
-                    <Icon active name="paper-plane" />
+                  <Button info>
+                    <Icon solid style={profileStyle.icon} name="venus-mars" />
                   </Button>
                 </Left>
                 <Body>
@@ -66,8 +66,8 @@ export default class Profile extends Component {
               </ListItem>
               <ListItem icon>
                 <Left>
-                  <Button>
-                    <Icon active name="paper-plane" />
+                  <Button info>
+                    <Icon solid style={profileStyle.icon} name="facebook-f" />
                   </Button>
                 </Left>
                 <Body>
@@ -76,8 +76,8 @@ export default class Profile extends Component {
               </ListItem>
               <ListItem icon>
                 <Left>
-                  <Button>
-                    <Icon active name="paper-plane" />
+                  <Button info>
+                    <Icon solid style={profileStyle.icon} name="instagram" />
                   </Button>
                 </Left>
                 <Body>
@@ -86,8 +86,8 @@ export default class Profile extends Component {
               </ListItem>
               <ListItem icon>
                 <Left>
-                  <Button>
-                    <Icon active name="paper-plane" />
+                  <Button info>
+                    <Icon solid style={profileStyle.icon} name="twitter" />
                   </Button>
                 </Left>
                 <Body>
@@ -120,5 +120,9 @@ const profileStyle = StyleSheet.create({
   desc: {
     color: '#0e1e40',
     textAlign: 'center',
+  },
+  icon: {
+    fontSize: 15,
+    color: '#fff',
   },
 });

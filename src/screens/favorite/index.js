@@ -1,52 +1,118 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import {
-  Container,
+  Badge,
   Body,
-  Right,
+  Container,
   Content,
+  Card,
+  CardItem,
+  Form,
+  H1,
+  H3,
+  Icon,
+  Item,
+  Input,
   Text,
-  List,
-  ListItem,
   Left,
-  Thumbnail,
 } from 'native-base';
+import { StyleSheet, Image } from 'react-native';
 
-export default class Favorite extends Component {
+const cover = 'https://i.pinimg.com/474x/bb/e5/06/bbe5064a2e35032e7559e1e64a6195c7.jpg';
+
+export default class Home extends Component {
   render() {
     return (
       <>
-        <Container>
-          <Content>
-            <List>
-              <ListItem avatar onPress={() => this.props.navigation.navigate('detail')}>
+        <Container style={favoriteStyle.parent}>
+          <Content style={favoriteStyle.body}>
+            {/* Search */}
+            <Form style={favoriteStyle.search}>
+              <Item regular>
+                <Input placeholder="Search book..." />
+                <Icon active name="search" />
+              </Item>
+            </Form>
+            {/* Best Books */}
+            <Text style={favoriteStyle.headTitle}>My Favorite</Text>
+            <Card>
+              <CardItem>
                 <Left>
-                  <Thumbnail square large source={{ uri: 'https://store-images.s-microsoft.com/image/apps.28597.68843572048501388.669471cb-d7a3-4829-8dd3-971e31f52503.a726cd37-4249-45da-857b-1b3faaa3e1f3'}} />
+                  <Image source={{ uri: cover }} style={favoriteStyle.cover} />
                 </Left>
-                <Body>
-                  <Text>Call of cthulhu</Text>
-                  <Text note>horor</Text>
+                <Body style={favoriteStyle.topBody}>
+                  <H1 style={favoriteStyle.title}>The Oddities Of Life</H1>
+                  <H3 style={favoriteStyle.author}>Martin Bryres</H3>
+                  <Badge>
+                    <Text>Delete</Text>
+                  </Badge>
                 </Body>
-                <Right>
-                  <Text note>3:43 pm</Text>
-                </Right>
-              </ListItem>
-              <ListItem avatar onPress={() => this.props.navigation.navigate('detail')}>
+              </CardItem>
+            </Card>
+            <Card>
+              <CardItem>
                 <Left>
-                  <Thumbnail square large source={{ uri: 'https://store-images.s-microsoft.com/image/apps.28597.68843572048501388.669471cb-d7a3-4829-8dd3-971e31f52503.a726cd37-4249-45da-857b-1b3faaa3e1f3' }} />
+                  <Image source={{ uri: cover }} style={favoriteStyle.cover} />
                 </Left>
-                <Body>
-                  <Text>Call of cthulhu part 3</Text>
-                  <Text note>horor</Text>
+                <Body style={favoriteStyle.topBody}>
+                  <H1 style={favoriteStyle.title}>The Oddities Of Life</H1>
+                  <H3 style={favoriteStyle.author}>Martin Bryres</H3>
+                  <Badge>
+                    <Text>Delete</Text>
+                  </Badge>
                 </Body>
-                <Right>
-                  <Text note>3:43 pm</Text>
-                </Right>
-              </ListItem>
-            </List>
+              </CardItem>
+            </Card>
+            <Card>
+              <CardItem>
+                <Left>
+                  <Image source={{ uri: cover }} style={favoriteStyle.cover} />
+                </Left>
+                <Body style={favoriteStyle.topBody}>
+                  <H1 style={favoriteStyle.title}>The Oddities Of Life</H1>
+                  <H3 style={favoriteStyle.author}>Martin Bryres</H3>
+                  <Badge>
+                    <Text>Delete</Text>
+                  </Badge>
+                </Body>
+              </CardItem>
+            </Card>
           </Content>
         </Container>
       </>
     );
   }
 }
+
+const favoriteStyle = StyleSheet.create({
+  body: {
+    padding: 15,
+    marginBottom: 20,
+  },
+  search: {
+    marginBottom: 30,
+  },
+  headTitle: {
+    fontWeight: 'bold',
+    marginBottom: 10,
+    fontSize: 20,
+    color: '#212529',
+  },
+  cover: {
+    height: 160,
+    width: null,
+    marginRight: 15,
+    flex: 1,
+  },
+  topBody: {
+    padding: 10,
+  },
+  title: {
+    fontWeight: 'bold',
+    color: '#212529',
+  },
+  author: {
+    fontSize: 16,
+    marginVertical: 10,
+  },
+});
