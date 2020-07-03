@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 import Home from '../../../screens/home';
+import Books from '../../../screens/books';
 import Favorite from '../../../screens/favorite';
 import Profile from '../../../screens/profile';
 
@@ -22,6 +23,16 @@ export default class Tab extends Component {
           }}
           component={Home}
           name="home"
+        />
+        <BottomTab.Screen
+          options={{
+            title: 'Books',
+            tabBarIcon: ({ color, size }) => (
+              <Icon name="book" color={color} size={size} />
+            ),
+          }}
+          component={Books}
+          name="book"
         />
         <BottomTab.Screen
           options={{

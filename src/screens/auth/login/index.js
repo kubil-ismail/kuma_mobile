@@ -1,10 +1,10 @@
 /* eslint-disable prettier/prettier */
-import React, { Component } from 'react';
-import { Form, Item, Input, Button, Text } from 'native-base';
+import React, {Component} from 'react';
+import { Form, Item, Input, Button, Text  } from 'native-base';
 import { KeyboardAvoidingView, StyleSheet, Image, View, ScrollView, Dimensions } from 'react-native';
-import logo from '../../assets/image/icon.png';
+import logo from '../../../assets/image/undraw_reading_time_gvg0.png';
 
-export default class SignUp extends Component {
+export default class Login extends Component {
   render() {
     return (
       <KeyboardAvoidingView
@@ -15,7 +15,7 @@ export default class SignUp extends Component {
           <View style={loginStyle.head}>
             <Image source={logo} style={loginStyle.logo} />
             <Text style={loginStyle.title}>Kuma Book</Text>
-            <Text style={loginStyle.desc}>Sign Up to join Kuma Book comunity</Text>
+            <Text style={loginStyle.desc}>Log In to join Kuma Book comunity</Text>
           </View>
           <View style={loginStyle.body}>
             <Form>
@@ -25,14 +25,11 @@ export default class SignUp extends Component {
               <Item regular style={loginStyle.input}>
                 <Input secureTextEntry placeholder="Password" />
               </Item>
-              <Item regular style={loginStyle.input}>
-                <Input secureTextEntry placeholder="Password Confirmation" />
-              </Item>
               <Button info block style={loginStyle.button}>
-                <Text>Sign Up</Text>
+                <Text>Log In</Text>
               </Button>
             </Form>
-            <Text style={loginStyle.desc} onPress={() => this.props.navigation.navigate('login')}>Login existing account</Text>
+            <Text style={loginStyle.desc} onPress={() => this.props.navigation.navigate('sign-up')}>Create account</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -53,11 +50,11 @@ const loginStyle = StyleSheet.create({
     marginTop: 10,
   },
   body: {
-    padding: 30,
+    padding: 20,
     marginBottom: 20,
   },
   logo: {
-    width: 200,
+    width: 290,
     height: 200,
     marginBottom: 10,
   },

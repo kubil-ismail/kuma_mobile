@@ -1,10 +1,10 @@
 /* eslint-disable prettier/prettier */
-import React, {Component} from 'react';
-import { Form, Item, Input, Button, Text  } from 'native-base';
+import React, { Component } from 'react';
+import { Form, Item, Input, Button, Text } from 'native-base';
 import { KeyboardAvoidingView, StyleSheet, Image, View, ScrollView, Dimensions } from 'react-native';
-import logo from '../../assets/image/icon.png';
+import logo from '../../../assets/image/undraw_book_lover_mkck.png';
 
-export default class Login extends Component {
+export default class SignUp extends Component {
   render() {
     return (
       <KeyboardAvoidingView
@@ -15,7 +15,7 @@ export default class Login extends Component {
           <View style={loginStyle.head}>
             <Image source={logo} style={loginStyle.logo} />
             <Text style={loginStyle.title}>Kuma Book</Text>
-            <Text style={loginStyle.desc}>Log In to join Kuma Book comunity</Text>
+            <Text style={loginStyle.desc}>Sign Up to join Kuma Book comunity</Text>
           </View>
           <View style={loginStyle.body}>
             <Form>
@@ -25,11 +25,14 @@ export default class Login extends Component {
               <Item regular style={loginStyle.input}>
                 <Input secureTextEntry placeholder="Password" />
               </Item>
+              <Item regular style={loginStyle.input}>
+                <Input secureTextEntry placeholder="Password confirmation" />
+              </Item>
               <Button info block style={loginStyle.button}>
-                <Text>Log In</Text>
+                <Text>Sign Up</Text>
               </Button>
             </Form>
-            <Text style={loginStyle.desc} onPress={() => this.props.navigation.navigate('sign-up')}>Create an account</Text>
+            <Text style={loginStyle.desc} onPress={() => this.props.navigation.navigate('login')}>Login existing account</Text>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -51,9 +54,10 @@ const loginStyle = StyleSheet.create({
   },
   body: {
     padding: 30,
+    marginBottom: 20,
   },
   logo: {
-    width: 200,
+    width: 250,
     height: 200,
     marginBottom: 10,
   },
