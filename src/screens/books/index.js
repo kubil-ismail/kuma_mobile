@@ -11,12 +11,35 @@ import {
   View,
 } from 'native-base';
 import { Col, Grid } from 'react-native-easy-grid';
-import { StyleSheet, Image } from 'react-native';
+import { StyleSheet, Image, FlatList } from 'react-native';
+import axios from 'axios';
 
 const cover = 'https://i.pinimg.com/474x/bb/e5/06/bbe5064a2e35032e7559e1e64a6195c7.jpg';
 
 export default class Books extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [],
+      isLoading: true,
+      currentPage: 1,
+    };
+  }
+
+  fetchBook = async (page = 1) => {
+    const { data } = await axios.get(`http://192.168.1.4:3000/book?limit=10&page=${page}`);
+    this.setState({
+      data: data.data,
+      isLoading: false,
+    });
+  };
+
+  componentDidMount = () => {
+    this.fetchBook();
+  }
+
   render() {
+    const { isLoading, data } = this.state;
     return (
       <>
         <Container style={homeStyle.parent}>
@@ -40,47 +63,17 @@ export default class Books extends Component {
               </Grid>
             </View>
             {/* Book Row */}
-            <View style={homeStyle.bookRow}>
-              <Grid>
-                <Col onPress={() => this.props.navigation.navigate('detail')}>
-                  <Image source={{ uri: cover }} style={homeStyle.cover} />
-                </Col>
-                <Col>
-                  <Image source={{ uri: cover }} style={homeStyle.cover} />
-                </Col>
-                <Col>
-                  <Image source={{ uri: cover }} style={homeStyle.cover} />
-                </Col>
-              </Grid>
-            </View>
-            {/* Book Row */}
-            <View style={homeStyle.bookRow}>
-              <Grid>
-                <Col>
-                  <Image source={{ uri: cover }} style={homeStyle.cover} />
-                </Col>
-                <Col>
-                  <Image source={{ uri: cover }} style={homeStyle.cover} />
-                </Col>
-                <Col>
-                  <Image source={{ uri: cover }} style={homeStyle.cover} />
-                </Col>
-              </Grid>
-            </View>
-            {/* Book Row */}
-            <View style={homeStyle.bookRow}>
-              <Grid>
-                <Col>
-                  <Image source={{ uri: cover }} style={homeStyle.cover} />
-                </Col>
-                <Col>
-                  <Image source={{ uri: cover }} style={homeStyle.cover} />
-                </Col>
-                <Col>
-                  <Image source={{ uri: cover }} style={homeStyle.cover} />
-                </Col>
-              </Grid>
-            </View>
+            <FlatList
+              data={data}
+              renderItem={({ item }) => (
+                <Image source={{ uri: `http://192.168.1.4:3000/${item.cover}` }} style={homeStyle.cover} />
+              )}
+              keyExtractor={item => item.id}
+              onRefresh={() => this.fetchBook()}
+              refreshing={isLoading}
+              onEndReached={this.nextPage}
+              onEndReachedThreshold={0.5}
+            />
           </Content>
         </Container>
       </>

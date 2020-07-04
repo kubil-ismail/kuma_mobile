@@ -12,7 +12,6 @@ import SignUp from './screens/auth/signup';
 import Detail from './screens/detail';
 import Tab from './components/organisms/footer';
 
-import logo from './assets/image/logo.png';
 const Stack = createStackNavigator();
 
 export default class App extends Component {
