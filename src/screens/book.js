@@ -75,7 +75,7 @@ export default class Book extends Component {
                 description={item.description}
               />
             )}
-            keyExtractor={item => parseInt(item.id, 10)}
+            keyExtractor={item => item.id.toString()}
             onRefresh={() => this.fetchBook()}
             refreshing={isLoading}
             onEndReached={this.nextPage}
