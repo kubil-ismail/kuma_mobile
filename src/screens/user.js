@@ -8,6 +8,7 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
+import { profile } from '../redux/actions/profileActions';
 import { login } from '../redux/actions/authActions';
 
 // Import component
@@ -39,10 +40,15 @@ export class User extends Component {
       },
     })
     .then((res) => {
-      const { data } = res;
+      const { data } = res.data;
+      this.props.updateProfile({
+        name: data[0].fullname,
+        email: data[0].email,
+        facebook: data[0].facebook,
+        instagram: data[0].instagram,
+        twitter: data[0].twitter,
+      });
       this.setState({
-        profile: data.data[0],
-        options: data.options,
         isLoading: false,
         isError: false,
       });
@@ -59,12 +65,17 @@ export class User extends Component {
     this.props.navigation.navigate('welcome');
   }
 
+  update = () => {
+    this.props.navigation.navigate('Edit profile');
+  }
+
   componentDidMount = () => {
     this.fetchProfile();
   }
 
   render() {
-    const { isError, isLoading, profile } = this.state;
+    const { isError, isLoading } = this.state;
+    const { name, email, facebook, instagram, twitter } = this.props.profile;
     return (
       <SafeAreaView style={styles.container}>
         <Header />
@@ -77,17 +88,19 @@ export class User extends Component {
             <View style={styles.body}>
               <Avatar
                 // rounded
-                title="BI"
+                showEditButton={true}
+                editButton={{color: 'red'}}
+                title={name.slice(0,2)}
                 size="xlarge"
                 overlayContainerStyle={{ backgroundColor: '#bcbec1' }}
                 activeOpacity={0.7}
               />
-              <Text h2 style={{ marginTop: 10, color: '#183153' }}>{profile.fullname}</Text>
+              <Text h2 style={{ marginTop: 10, color: '#183153' }}>{name}</Text>
             </View>
 
             <ListItem
               key={1}
-              title={profile.email}
+              title={email}
               leftIcon={
                 <Icon solid  name="envelope" size={20} />
               }
@@ -95,7 +108,7 @@ export class User extends Component {
             />
             <ListItem
               key={2}
-              title={profile.facebook}
+              title={facebook}
               leftIcon={
                 <Icon solid name="facebook-f" size={20} />
               }
@@ -103,7 +116,7 @@ export class User extends Component {
             />
             <ListItem
               key={3}
-              title={profile.instagram}
+              title={instagram}
               leftIcon={
                 <Icon solid name="instagram" size={20} />
               }
@@ -111,31 +124,25 @@ export class User extends Component {
             />
             <ListItem
               key={4}
-              title={profile.twitter}
+              title={twitter}
               leftIcon={
                 <Icon solid name="twitter" size={20} />
               }
               bottomDivider
             />
-            <ListItem
-              key={5}
-              title={profile.birthdate}
-              leftIcon={
-                <Icon solid name="birthday-cake" size={20} />
-              }
-              bottomDivider
-            />
-            <ListItem
-              key={6}
-              title={profile.gender}
-              leftIcon={
-                <Icon solid name="venus-mars" size={15} />
-              }
-              bottomDivider
-            />
-            <TouchableOpacity onPress={() => this.onLogout()}>
+            <TouchableOpacity onPress={() => this.update()}>
               <ListItem
                 key={7}
+                title="Edit Profile"
+                leftIcon={
+                  <Icon solid name="edit" size={15} />
+                }
+                bottomDivider
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => this.onLogout()}>
+              <ListItem
+                key={8}
                 title="Log out"
                 leftIcon={
                   <Icon solid name="sign-out-alt" size={20} />
@@ -168,6 +175,7 @@ const mapStateToProps = (state) => {
   // Redux Store --> Component
   return {
     auth: state.authReducer,
+    profile: state.profileReducer,
   };
 };
 
@@ -175,7 +183,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
-    // Login
+    // UPDATE PROFILE
+    updateProfile: (request) => dispatch(profile(request)),
     reduxLogin: (trueFalse) => dispatch(login(trueFalse)),
   };
 };

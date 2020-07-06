@@ -20,6 +20,7 @@ import Verify from './screens/auth/verify';
 import Home from './screens/book';
 import Favorite from './screens/favorite';
 import User from './screens/user';
+import Update from './screens/updateUser';
 import Detail from './screens/detail';
 import Search from './screens/search';
 
@@ -44,6 +45,10 @@ export default class App extends Component {
               <Stack.Screen
                 component={Detail}
                 name={'Detail'}
+              />
+              <Stack.Screen
+                component={Update}
+                name={'Edit profile'}
               />
               <Stack.Screen
                 options={{ headerShown: false }}

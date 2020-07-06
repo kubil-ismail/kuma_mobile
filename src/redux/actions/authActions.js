@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-import {post} from '../../helper/http';
 
 // Login
 export const login = (request) => ({

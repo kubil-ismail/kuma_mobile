@@ -1,7 +1,9 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import { Dimensions, FlatList, SafeAreaView, StyleSheet } from 'react-native';
+// import FAB from 'react-native-fab';
 import axios from 'axios';
+// import Icon from 'react-native-vector-icons/FontAwesome5';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
