@@ -98,6 +98,7 @@ export class Detail extends Component {
     }, config)
     .then(() => {
       ToastAndroid.show('Review success', ToastAndroid.SHORT);
+      this.setState({ InputReview: '' });
       this.fetchReview();
     })
     .catch(() => ToastAndroid.show('Something wrong. Try again', ToastAndroid.SHORT));
