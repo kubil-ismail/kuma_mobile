@@ -9,6 +9,7 @@ export default function book(props) {
     <TouchableOpacity
       onPress={() => props.navigation.navigate('Detail', {
         bookId: props.id,
+        bookName: props.name,
       })
     }>
       <Card

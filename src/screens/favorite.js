@@ -96,6 +96,7 @@ export class Favorite extends Component {
                 leftIcon={{ name: 'book' }}
                 onPress={() => this.props.navigation.navigate('Detail',{
                   bookId: item.id,
+                  bookName: item.name,
                 })}
                 bottomDivider
                 chevron

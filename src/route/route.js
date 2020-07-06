@@ -33,7 +33,11 @@ export default function route() {
         component={Tab}
         name={'home'}
       />
-      <Stack.Screen component={Detail} name={'Detail'} />
+      <Stack.Screen
+        options={(req) => ({ title: req.route.params.bookName })}
+        component={Detail}
+        name={'Detail'}
+      />
       <Stack.Screen
         options={(req) => ({ title: req.route.params.genreName })}
         component={Genre}
