@@ -27,71 +27,44 @@ const BottomTab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 export default class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      login: true,
-    };
-  }
-
-  login = () => {
-    this.setState({ isLogin: true });
-    this.props.naviagion.navigate('home');
-  };
-  logout = () => {
-    this.setState({ isLogin: false });
-    this.props.naviagion.navigate('login');
-  };
-
   render() {
-    const { login } = this.state;
     return (
       // Redux: Global Store
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <NavigationContainer>
             <Stack.Navigator>
-              {login && (
-                <>
-                  <Stack.Screen
-                    options={{
-                      headerShown: false,
-                    }}
-                    component={Tab}
-                    name={'home'}
-                  />
-                  <Stack.Screen
-                    component={Detail}
-                    name={'Detail'}
-                  />
-                </>
-              )}
-
-              {!login && (
-                <>
-                  <Stack.Screen
-                    options={{ headerShown: false }}
-                    component={Welcome}
-                    name={'welcome'}
-                  />
-                  <Stack.Screen
-                    options={{ headerShown: false }}
-                    component={Verify}
-                    name={'verify'}
-                  />
-                  <Stack.Screen
-                    options={{ headerShown: false }}
-                    name={'login'}
-                  >
-                    {props => <Login {...props} login={this.login} />}
-                  </Stack.Screen>
-                  <Stack.Screen
-                    options={{ headerShown: false }}
-                    component={SignUp}
-                    name={'sign-up'}
-                  />
-                </>
-              )}
+              <Stack.Screen
+                options={{
+                  headerShown: false,
+                }}
+                component={Tab}
+                name={'home'}
+              />
+              <Stack.Screen
+                component={Detail}
+                name={'Detail'}
+              />
+              <Stack.Screen
+                options={{ headerShown: false }}
+                component={Welcome}
+                name={'welcome'}
+              />
+              <Stack.Screen
+                options={{ headerShown: false }}
+                component={Verify}
+                name={'verify'}
+              />
+              <Stack.Screen
+                options={{ headerShown: false }}
+                name={'login'}
+                component={Login}
+              />
+              <Stack.Screen
+                options={{ headerShown: false }}
+                component={SignUp}
+                name={'sign-up'}
+              />
             </Stack.Navigator>
           </NavigationContainer>
         </PersistGate>
@@ -136,7 +109,7 @@ export class Tab extends Component {
         />
         <BottomTab.Screen
           options={{
-            title: 'Favorite',
+            title: 'Profile',
             tabBarIcon: ({ color, size }) => (
               <Icon name="user" solid color={color} size={size} />
             ),

@@ -4,20 +4,15 @@ import {post} from '../../helper/http';
 // Login
 export const login = (request) => ({
   type: 'LOGIN',
-  payload: post({
-    url: 'auth/login',
-    body: { request },
-  }),
+  payload: {
+    status: request.status,
+    userId: request.userId,
+    apikey: request.apikey,
+  },
 });
 
 // Sign Up
 export const signup = (request) => ({
-  type: 'SIGNUP',
-  payload: post({
-    url: 'auth/signin',
-    body: {
-      email: request.email,
-      password: request.password,
-    },
-  }),
+  type: 'SIGN_UP',
+  payload: request,
 });

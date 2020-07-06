@@ -1,15 +1,25 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { ActivityIndicator, Dimensions, SafeAreaView, ScrollView, StyleSheet, Text } from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+} from 'react-native';
 import { Button, Image, Input  } from 'react-native-elements';
 import axios from 'axios';
-import store from 'store2';
+
+// Imports: Redux Actions
+import { connect } from 'react-redux';
+import { login } from '../../redux/actions/authActions';
 
 import svg from '../../assets/image/undraw_bookshelves_xekd.png';
 const url = 'http://192.168.1.4:8000/';
 
-export default class Login extends Component {
+export class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -19,29 +29,42 @@ export default class Login extends Component {
       isError: false,
       errorMsg: null,
     };
+
+    const { loggedIn, apikey, userId } = this.props.auth;
+    if (loggedIn && apikey && userId) {
+      this.props.navigation.navigate('home');
+    }
   }
 
-  login = async () => {
+  onLogin = () => {
     const { email, password } = this.state;
     if (email !== null && password !== null) {
-      this.setState({ isLoading: true });
-      try {
-        await axios.post(`${url}auth/login`,{
-          email, password,
-        });
-        this.setState({
-          isLoading: false,
-          isError: false,
-        });
-        store({ login: true });
-        this.props.login();
-      } catch (error) {
+      axios.post(`${url}auth/login`, {
+        email, password,
+      }).then((res) => {
+        const { data } = res.data;
+        if (data.apiKey) {
+          this.props.reduxLogin({
+            status: true,
+            apikey: data.apiKey,
+            userId: data.userId,
+          });
+          this.props.navigation.navigate('home');
+        } else {
+          this.props.reduxLogin({
+            status: false,
+            apiKey: null,
+            userId: null,
+          });
+        }
+      })
+      .catch((err) => {
         this.setState({
           isLoading: false,
           isError: true,
-          errorMsg: error.response.data.message,
+          errorMsg: err.response.data.message,
         });
-      }
+      });
     } else {
       this.setState({
         isLoading: false,
@@ -91,7 +114,7 @@ export default class Login extends Component {
           <Button
             title="Log In"
             loading={isLoading}
-            onPress={() => this.login()}
+            onPress={() => this.onLogin()}
           />
           <Text
             // eslint-disable-next-line react-native/no-inline-styles
@@ -121,3 +144,23 @@ const styles = StyleSheet.create({
     marginVertical: 30,
   },
 });
+
+// Map State To Props (Redux Store Passes State To Component)
+const mapStateToProps = (state) => {
+  // Redux Store --> Component
+  return {
+    auth: state.authReducer,
+  };
+};
+
+// Map Dispatch To Props (Dispatch Actions To Reducers. Reducers Then Modify The Data And Assign It To Your Props)
+const mapDispatchToProps = (dispatch) => {
+  // Action
+  return {
+    // Login
+    reduxLogin: (trueFalse) => dispatch(login(trueFalse)),
+  };
+};
+
+// Exports
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

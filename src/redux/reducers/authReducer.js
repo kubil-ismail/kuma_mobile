@@ -2,9 +2,8 @@
 // Initial State
 const initialState = {
   loggedIn: false,
-  isLoading: false,
-  isError: false,
-  errorMsg: null,
+  apikey: null,
+  userId: null,
   email: null,
 };
 
@@ -12,42 +11,19 @@ const initialState = {
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     // Login
-    // case 'LOGIN_PENDING': {
-    //   return {
-    //     ...state,
-    //     ...{ isLoading: true },
-    //   };
-    // }
-    // case 'LOGIN_FULFILLED': {
-    //   const { data } = action.payload.data;
-    //   return {
-    //     ...state,
-    //     ...{ isLoading: false, data },
-    //   };
-    // }
-    // case 'LOGIN_REJECTED': {
-    //   return { ...state, ...{ isLoading: true, isError: true } };
-    // }
+    case 'LOGIN': {
+      const { status, apikey, userId } = action.payload;
+      return {
+        ...state,
+        ...{ loggedIn: status, apikey, userId },
+      };
+    }
     // Sign Up
-    case 'SIGNUP_PENDING': {
-      console.log('pending...');
+    case 'SIGN_UP': {
       return {
         ...state,
-        ...{ isLoading: true },
+        ...{ email: action.payload },
       };
-    }
-    case 'SIGNUP_FULFILLED': {
-
-      console.log('full...');
-      const { data } = action.payload.data;
-      return {
-        ...state,
-        ...{ isLoading: false, data },
-      };
-    }
-    case 'SIGNUP_REJECTED': {
-      console.log('err...');
-      return { ...state, ...{ isLoading: false, isError: true } };
     }
     // Default
     default: {

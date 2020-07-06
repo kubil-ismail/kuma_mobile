@@ -4,13 +4,17 @@ import { Dimensions, FlatList, SafeAreaView, StyleSheet } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import axios from 'axios';
 
+// Imports: Redux Actions
+import { connect } from 'react-redux';
+import { login } from '../redux/actions/authActions';
+
 // Import component
 import Header from '../components/header';
 import Error from '../components/error';
 
 const url = 'http://192.168.1.4:8000/';
 
-export default class Favorite extends Component {
+export class Favorite extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -20,13 +24,17 @@ export default class Favorite extends Component {
       isLoading: true,
       isError: false,
     };
+    const { loggedIn, apikey, userId } = this.props.auth;
+    if (!loggedIn && !apikey && !userId) {
+      this.props.navigation.navigate('welcome');
+    }
   }
 
   fetchFavorite = () => {
-    const { userId } = this.state;
-    axios.get(`${url}profile/favorite/${userId}`,{
+    const { apikey, userId } = this.props.auth;
+    axios.get(`${url}profile/favorite/${userId}?limit=15`,{
       headers: {
-        Authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfcmVzdWx0Ijp7ImlkIjo0LCJlbWFpbCI6Imt1bWFiZWFyQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJFdhL0NQNWc3cmh3c0RkUTBaQklRNGVoRWx2bDFUdDlQQU9hSlFBODVtSUtDdmVyODhMSlZXIiwicm9sZV9pZCI6MSwiYXBpX2tleSI6IiIsImNyZWF0ZWRfYXQiOiIyMDIwLTA1LTEzVDAzOjAxOjQ2LjAwMFoiLCJ1cGRhdGVfYXQiOm51bGx9LCJpYXQiOjE1ODkzNDIyNTJ9.C6azxkpw5LRZqY65vzBWBomoPyn77344qI0hQiazYT4'
+        Authorization: apikey,
       },
     })
     .then((res) => {
@@ -40,6 +48,28 @@ export default class Favorite extends Component {
     })
     .catch(() => this.setState({isError: true}));
   };
+
+  nextPage = () => {
+    const { options } = this.state;
+    if (options.next) {
+      const { apikey, userId } = this.props.auth;
+      axios.get(`${url}profile/favorite/${userId}?${options.next}`,{
+        headers: {
+          Authorization: apikey,
+        },
+      })
+      .then((res) => {
+        const { data } = res;
+        this.setState({
+          data: data.data,
+          options: data.options,
+          isLoading: false,
+          isError: false,
+        });
+      })
+      .catch(() => this.setState({ isError: true }));
+    }
+  }
 
   componentDidMount = () => {
     this.fetchFavorite();
@@ -71,9 +101,11 @@ export default class Favorite extends Component {
                 chevron
               />
             )}
-            keyExtractor={item => parseInt(item.id, 10)}
+            keyExtractor={item => item.book_favorites_id.toString()}
             onRefresh={() => this.fetchFavorite()}
             refreshing={isLoading}
+            onEndReached={this.nextPage}
+            onEndReachedThreshold={0.5}
             style={styles.full}
           />
         )}
@@ -99,3 +131,24 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
+
+// Map State To Props (Redux Store Passes State To Component)
+const mapStateToProps = (state) => {
+  // Redux Store --> Component
+  return {
+    auth: state.authReducer,
+  };
+};
+
+// Map Dispatch To Props (Dispatch Actions To Reducers. Reducers Then Modify The Data And Assign It To Your Props)
+const mapDispatchToProps = (dispatch) => {
+  // Action
+  return {
+    // Login
+    reduxLogin: (trueFalse) => dispatch(login(trueFalse)),
+  };
+};
+
+// Exports
+export default connect(mapStateToProps, mapDispatchToProps)(Favorite);
+

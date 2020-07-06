@@ -4,24 +4,19 @@ import { ActivityIndicator, Dimensions, View, ScrollView, StyleSheet} from 'reac
 import { Button, Image, Text  } from 'react-native-elements';
 
 import svg from '../../assets/image/undraw_book_lover_mkck.png';
-import store from 'store2';
 
 export default class Welcome extends Component {
-  constructor(props) {
-    super(props);
-    if (store('login')) {
-      this.props.navigation.navigate('home');
-    }
-  }
   render() {
     return (
       <ScrollView>
         <View style={styles.container}>
-          <Image
-            source={svg}
-            style={styles.svg}
-            PlaceholderContent={<ActivityIndicator />}
-          />
+          <View style={styles.center}>
+            <Image
+              source={svg}
+              style={styles.svg}
+              PlaceholderContent={<ActivityIndicator />}
+            />
+          </View>
           <Text h1 style={styles.h1}>Kuma Book</Text>
           <Text style={styles.p}>The world's largest novel and manga wikipedia and database 100% free</Text>
           <Button
@@ -34,6 +29,13 @@ export default class Welcome extends Component {
             type="outline"
             title="Log In"
             onPress={() => this.props.navigation.navigate('login')}
+          />
+          {/* eslint-disable-next-line react-native/no-inline-styles */}
+          <View style={{ marginTop: 10 }} />
+          <Button
+            title="Activate account"
+            type="clear"
+            onPress={() => this.props.navigation.navigate('verify')}
           />
         </View>
       </ScrollView>
@@ -48,6 +50,8 @@ const styles = StyleSheet.create({
     flex: 1,
     height: deviceHeight,
     paddingHorizontal: 15,
+  },
+  center: {
     alignItems: 'center',
   },
   svg: {

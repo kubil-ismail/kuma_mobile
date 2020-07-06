@@ -6,40 +6,42 @@ import SmoothPinCodeInput from 'react-native-smooth-pincode-input';
 import axios from 'axios';
 import store from 'store2';
 
+// Imports: Redux Actions
+import { connect } from 'react-redux';
+import { signup } from '../../redux/actions/authActions';
+
 import svg from '../../assets/image/undraw_confirmation_2uy0.png';
 const url = 'http://192.168.1.4:8000/';
 
-export default class Verify extends Component {
+export class Verify extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: 'atta@gmail.com',
       code: null,
     };
 
-    if (store('login')) {
+    const { loggedIn, apikey, userId, email } = this.props.auth;
+    if (loggedIn && apikey && userId) {
       this.props.navigation.navigate('home');
     }
   }
 
   activate = async () => {
-    const { email, code } = this.state;
+    const { email } = this.props.auth;
+    const { code } = this.state;
     if (email !== null && code !== null) {
       this.setState({ isLoading: true });
-      try {
-        await axios.post(`${url}auth/activate`, {
-          email: email, code: parseInt(code, 10),
-        });
-
-        this.props.navigation.navigate('login');
-      } catch (error) {
-        console.log(error.response.data);
+      axios.post(`${url}auth/activate`, {
+        email, code: parseInt(code, 10),
+      })
+      .then(() => this.props.navigation.navigate('login'))
+      .catch((err) => {
         this.setState({
           isLoading: false,
           isError: true,
-          errorMsg: error.response.data.message,
+          errorMsg: err.response.data.message,
         });
-      }
+      });
     }
   }
 
@@ -87,8 +89,28 @@ const styles = StyleSheet.create({
   },
   svg: {
     resizeMode: 'cover',
-    width: 250,
+    width: 300,
     height: 200,
     marginVertical: 30,
   },
 });
+
+// Map State To Props (Redux Store Passes State To Component)
+const mapStateToProps = (state) => {
+  // Redux Store --> Component
+  return {
+    auth: state.authReducer,
+  };
+};
+
+// Map Dispatch To Props (Dispatch Actions To Reducers. Reducers Then Modify The Data And Assign It To Your Props)
+const mapDispatchToProps = (dispatch) => {
+  // Action
+  return {
+    // Sign Up
+    reduxSignUp: (request) => dispatch(signup(request)),
+  };
+};
+
+// Exports
+export default connect(mapStateToProps, mapDispatchToProps)(Verify);

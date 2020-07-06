@@ -4,11 +4,13 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { ActivityIndicator, Dimensions, SafeAreaView, ScrollView, StyleSheet, Text } from 'react-native';
 import { Button, Image, Input } from 'react-native-elements';
 
-
 // Imports: Redux Actions
 import { connect } from 'react-redux';
 import { signup } from '../../redux/actions/authActions';
 import svg from '../../assets/image/undraw_reading_0re1.png';
+import axios from 'axios';
+
+const url = 'http://192.168.1.4:8000/';
 
 export class SignUp extends Component {
   constructor(props) {
@@ -26,26 +28,36 @@ export class SignUp extends Component {
   signUp = async () => {
     const { email, password, password2 } = this.state;
     if (email !== null && password !== null) {
-      if (password === password2) {
-        this.setState({ isLoading: true });
-        try {
-          this.props.reduxSignUp({
+      if (password.length >= 8) {
+        if (password === password2) {
+          axios.post(`${url}auth/signin`,{
             email, password,
+          })
+          .then((res) => {
+            const { data } = res.data;
+            this.props.reduxSignUp(data.email);
+            this.props.navigation.navigate('verify');
+          })
+          .catch((err) => {
+            const { data } = err.response;
+            this.setState({
+              isLoading: false,
+              isError: true,
+              errorMsg: data.message,
+            });
           });
-          console.log(this.props.auth);
-          // this.props.navigation.navigate('verify');
-        } catch (error) {
+        } else {
           this.setState({
             isLoading: false,
             isError: true,
-            errorMsg: error.response.data.message,
+            errorMsg: 'Password not match',
           });
         }
       } else {
         this.setState({
           isLoading: false,
           isError: true,
-          errorMsg: 'Password not match',
+          errorMsg: 'password must be greater than 8 characters',
         });
       }
     } else {

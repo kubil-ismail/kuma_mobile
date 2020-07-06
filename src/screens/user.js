@@ -1,10 +1,14 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
-import { Dimensions, SafeAreaView, View, StyleSheet, ScrollView } from 'react-native';
+import { Dimensions, SafeAreaView, View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Avatar, ListItem, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import axios from 'axios';
+
+// Imports: Redux Actions
+import { connect } from 'react-redux';
+import { login } from '../redux/actions/authActions';
 
 // Import component
 import Header from '../components/header';
@@ -12,7 +16,7 @@ import Error from '../components/error';
 
 const url = 'http://192.168.1.4:8000/';
 
-export default class User extends Component {
+export class User extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,13 +25,17 @@ export default class User extends Component {
       userId: 30,
       profile: [],
     };
+    const { loggedIn, apikey, userId } = this.props.auth;
+    if (!loggedIn && !apikey && !userId) {
+      this.props.navigation.navigate('welcome');
+    }
   }
 
   fetchProfile = () => {
-    const { userId } = this.state;
+    const { apikey, userId } = this.props.auth;
     axios.get(`${url}profile/${userId}`, {
       headers: {
-        Authorization: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfcmVzdWx0Ijp7ImlkIjo0LCJlbWFpbCI6Imt1bWFiZWFyQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJFdhL0NQNWc3cmh3c0RkUTBaQklRNGVoRWx2bDFUdDlQQU9hSlFBODVtSUtDdmVyODhMSlZXIiwicm9sZV9pZCI6MSwiYXBpX2tleSI6IiIsImNyZWF0ZWRfYXQiOiIyMDIwLTA1LTEzVDAzOjAxOjQ2LjAwMFoiLCJ1cGRhdGVfYXQiOm51bGx9LCJpYXQiOjE1ODkzNDIyNTJ9.C6azxkpw5LRZqY65vzBWBomoPyn77344qI0hQiazYT4'
+        Authorization: apikey,
       },
     })
     .then((res) => {
@@ -40,6 +48,15 @@ export default class User extends Component {
       });
     })
     .catch(() => this.setState({ isError: true }));
+  }
+
+  onLogout = () => {
+    this.props.reduxLogin({
+      status: false,
+      apiKey: null,
+      userId: null,
+    });
+    this.props.navigation.navigate('welcome');
   }
 
   componentDidMount = () => {
@@ -116,14 +133,16 @@ export default class User extends Component {
               }
               bottomDivider
             />
-            <ListItem
-              key={7}
-              title="Log out"
-              leftIcon={
-                <Icon solid name="sign-out-alt" size={20} />
-              }
-              bottomDivider
-            />
+            <TouchableOpacity onPress={() => this.onLogout()}>
+              <ListItem
+                key={7}
+                title="Log out"
+                leftIcon={
+                  <Icon solid name="sign-out-alt" size={20} />
+                }
+                bottomDivider
+              />
+            </TouchableOpacity>
           </ScrollView>
         )}
       </SafeAreaView>
@@ -143,3 +162,23 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
 });
+
+// Map State To Props (Redux Store Passes State To Component)
+const mapStateToProps = (state) => {
+  // Redux Store --> Component
+  return {
+    auth: state.authReducer,
+  };
+};
+
+// Map Dispatch To Props (Dispatch Actions To Reducers. Reducers Then Modify The Data And Assign It To Your Props)
+const mapDispatchToProps = (dispatch) => {
+  // Action
+  return {
+    // Login
+    reduxLogin: (trueFalse) => dispatch(login(trueFalse)),
+  };
+};
+
+// Exports
+export default connect(mapStateToProps, mapDispatchToProps)(User);

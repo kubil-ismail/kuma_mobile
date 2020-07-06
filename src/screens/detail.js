@@ -8,17 +8,22 @@ import {
   ScrollView,
   View,
   TouchableOpacity,
+  ToastAndroid,
 } from 'react-native';
 import { ButtonGroup, Card, Image, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import axios from 'axios';
+
+// Imports: Redux Actions
+import { connect } from 'react-redux';
+import { login } from '../redux/actions/authActions';
 
 // Import component
 import Error from '../components/error';
 
 const url = 'http://192.168.1.4:8000/';
 
-export default class Detail extends Component {
+export class Detail extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,6 +34,11 @@ export default class Detail extends Component {
       isLoading: true,
       isError: false,
     };
+
+    const { loggedIn, apikey, userId } = this.props.auth;
+    if (!loggedIn && !apikey && !userId) {
+      this.props.navigation.navigate('welcome');
+    }
   }
 
   fetchBook = () => {
@@ -55,6 +65,20 @@ export default class Detail extends Component {
       });
     }).catch(() => this.setState({ isError: true }));
   };
+
+  addFavorite = () => {
+    const { apikey, userId } = this.props.auth;
+    const { bookId } = this.props.route.params;
+    const config = {
+      headers: {
+        Authorization: apikey,
+      },
+    };
+
+    axios.post(`${url}favorite`, { book_id: bookId, user_id: userId}, config)
+    .then(() => ToastAndroid.show('Book add to favorite list', ToastAndroid.SHORT))
+    .catch(() => ToastAndroid.show('Something wrong. Try again', ToastAndroid.SHORT));
+  }
 
   componentDidMount = () => {
     this.fetchBook();
@@ -120,6 +144,7 @@ export default class Detail extends Component {
         )}
         <TouchableOpacity
           style={styles.btnfloat}
+          onPress={() => this.addFavorite()}
         >
           <Icon name="heart" solid size={20} color="#f57da1" />
         </TouchableOpacity>
@@ -177,3 +202,23 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
 });
+
+// Map State To Props (Redux Store Passes State To Component)
+const mapStateToProps = (state) => {
+  // Redux Store --> Component
+  return {
+    auth: state.authReducer,
+  };
+};
+
+// Map Dispatch To Props (Dispatch Actions To Reducers. Reducers Then Modify The Data And Assign It To Your Props)
+const mapDispatchToProps = (dispatch) => {
+  // Action
+  return {
+    // Login
+    reduxLogin: (trueFalse) => dispatch(login(trueFalse)),
+  };
+};
+
+// Exports
+export default connect(mapStateToProps, mapDispatchToProps)(Detail);

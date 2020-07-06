@@ -3,6 +3,10 @@ import React, { Component } from 'react';
 import { Dimensions, FlatList, SafeAreaView, StyleSheet } from 'react-native';
 import axios from 'axios';
 
+// Imports: Redux Actions
+import { connect } from 'react-redux';
+import { login } from '../redux/actions/authActions';
+
 // import component
 import BookCard from '../components/book';
 import Header from '../components/header';
@@ -10,7 +14,7 @@ import Error from '../components/error';
 
 const url = 'http://192.168.1.4:8000/';
 
-export default class Book extends Component {
+export class Book extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,6 +25,10 @@ export default class Book extends Component {
       onSearch: true,
       isError: false,
     };
+    const { loggedIn, apikey, userId } = this.props.auth;
+    if (!loggedIn && !apikey && !userId) {
+      this.props.navigation.navigate('welcome');
+    }
   }
 
   fetchBook = (page = 1) => {
@@ -95,3 +103,23 @@ const styles = StyleSheet.create({
     height: deviceHeight,
   },
 });
+
+// Map State To Props (Redux Store Passes State To Component)
+const mapStateToProps = (state) => {
+  // Redux Store --> Component
+  return {
+    auth: state.authReducer,
+  };
+};
+
+// Map Dispatch To Props (Dispatch Actions To Reducers. Reducers Then Modify The Data And Assign It To Your Props)
+const mapDispatchToProps = (dispatch) => {
+  // Action
+  return {
+    // Login
+    reduxLogin: (trueFalse) => dispatch(login(trueFalse)),
+  };
+};
+
+// Exports
+export default connect(mapStateToProps, mapDispatchToProps)(Book);
