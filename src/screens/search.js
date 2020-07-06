@@ -1,7 +1,14 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import { SearchBar, Image, Text } from 'react-native-elements';
-import { ActivityIndicator, Dimensions, FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import axios from 'axios';
 
 // import component

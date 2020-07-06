@@ -67,9 +67,10 @@ export class Book extends Component {
     .catch(() => this.setState({ isError: true }));
   };
 
-  viewGenre = (id) => {
-    this.props.navigation.navigate('genre',{
+  viewGenre = (id, name) => {
+    this.props.navigation.navigate('Genre',{
       genreId: id,
+      genreName: name,
     });
   }
 
@@ -115,7 +116,7 @@ export class Book extends Component {
                 data={genre}
                 renderItem={({ item }) => (
                   <TouchableOpacity
-                    onPress={() => this.viewGenre(item.id)}
+                    onPress={() => this.viewGenre(item.id, item.name)}
                   >
                     <Badge
                       value={item.name}
