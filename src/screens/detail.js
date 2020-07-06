@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   ToastAndroid,
 } from 'react-native';
-import { ButtonGroup, Card, Image, Text } from 'react-native-elements';
+import { ButtonGroup, Button, Card, Image, Input, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import axios from 'axios';
 
@@ -30,9 +30,9 @@ export class Detail extends Component {
       data: [],
       reviews: [],
       options: [],
-      userId: 30,
       isLoading: true,
       isError: false,
+      InputReview: null,
     };
 
     const { loggedIn, apikey, userId } = this.props.auth;
@@ -77,6 +77,29 @@ export class Detail extends Component {
 
     axios.post(`${url}favorite`, { book_id: bookId, user_id: userId}, config)
     .then(() => ToastAndroid.show('Book add to favorite list', ToastAndroid.SHORT))
+    .catch(() => ToastAndroid.show('Something wrong. Try again', ToastAndroid.SHORT));
+  }
+
+  addReview = () => {
+    const { InputReview } = this.state;
+    const { apikey, userId } = this.props.auth;
+    const { bookId } = this.props.route.params;
+    const config = {
+      headers: {
+        Authorization: apikey,
+      },
+    };
+
+    axios.post(`${url}review`, {
+      book_id: bookId,
+      user_id: userId,
+      review: InputReview,
+      rating: 10,
+    }, config)
+    .then(() => {
+      ToastAndroid.show('Review success', ToastAndroid.SHORT);
+      this.fetchReview();
+    })
     .catch(() => ToastAndroid.show('Something wrong. Try again', ToastAndroid.SHORT));
   }
 
@@ -126,19 +149,29 @@ export class Detail extends Component {
               <Text h4 style={styles.desc}>About</Text>
               <Text style={styles.desc}>{data.description}</Text>
 
-              {/* Review */}
-              <Text h4 style={styles.desc}>Review</Text>
-              {reviews.length >= 1 && reviews.map((val) => (
-                <Card
-                  key={val.id}
-                  title={val.fullname}
-                  titleStyle={styles.review}
-                >
-                  <Text style={styles.review}>
-                    {val.review}
-                  </Text>
-                </Card>
-              ))}
+            </View>
+            {/* Review */}
+            <Text h4 style={styles.desc}>Review</Text>
+            {reviews.length >= 1 && reviews.map((val) => (
+              <Card
+                key={val.id}
+                title={val.fullname}
+                titleStyle={styles.review}
+              >
+                <Text style={styles.review}>
+                  {val.review}
+                </Text>
+              </Card>
+            ))}
+            <View style={styles.bottom}>
+              <Input
+                placeholder="Add review..."
+                onChangeText={(e) => this.setState({ InputReview: e })}
+              />
+              <Button
+                title="Add review"
+                onPress={this.addReview}
+              />
             </View>
           </ScrollView>
         )}
@@ -173,6 +206,10 @@ const styles = StyleSheet.create({
   cover: {
     height: 200,
     width: 300,
+    maxWidth: 200,
+    minWidth: 200,
+    minHeight: 200,
+    maxHeight: 200,
     borderRadius: 5,
   },
   full: {
@@ -200,6 +237,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 100,
     elevation: 3,
+  },
+  bottom: {
+    paddingHorizontal: 15,
+    alignItems: 'flex-start',
+    marginBottom: 20,
   },
 });
 

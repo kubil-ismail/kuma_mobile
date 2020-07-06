@@ -1,7 +1,16 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
-import { Dimensions, FlatList, SafeAreaView, StyleSheet } from 'react-native';
-// import FAB from 'react-native-fab';
+import {
+  Dimensions,
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  ScrollView,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import { Badge, Text } from 'react-native-elements';
 import axios from 'axios';
 // import Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -23,6 +32,7 @@ export class Book extends Component {
       search: '',
       data: [],
       options: [],
+      genre: [],
       isLoading: true,
       onSearch: true,
       isError: false,
@@ -42,55 +52,85 @@ export class Book extends Component {
         options: data.options,
         isLoading: false,
       });
-    }).catch(() => this.setState({ isError: true }));
+    })
+    .catch(() => this.setState({ isError: true }));
   };
 
-  nextPage = () => {
-    const { options } = this.state;
-    if (options.next) {
-      axios.get(`${url}book?${options.next}`)
-      .then((res) => {
-        const { data } = res;
-        this.setState({
-          data: data.data,
-          options: data.options,
-          isLoading: false,
-        });
-      })
-      .catch(() => this.setState({ isError: true }));
-    }
+  fetchGenre = () => {
+    axios.get(`${url}genre`)
+    .then((res) => {
+      const { data } = res;
+      this.setState({
+        genre: data.data,
+      });
+    })
+    .catch(() => this.setState({ isError: true }));
+  };
+
+  viewGenre = (id) => {
+    this.props.navigation.navigate('genre',{
+      genreId: id,
+    });
   }
 
   componentDidMount = () => {
     this.fetchBook();
+    this.fetchGenre();
   }
 
   render() {
-    const { isError, isLoading, data } = this.state;
+    const { isError, isLoading, data, genre } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <Header />
         {isError && (
           <Error />
         )}
-        {!isError && (
-          <FlatList
-            data={data}
-            renderItem={({ item }) => (
-              <BookCard
-                {...this.props}
-                id={item.id}
-                name={item.name}
-                cover={item.cover}
-                description={item.description}
+        {!isError && !isLoading && (
+          <>
+            <ScrollView style={styles.body}>
+              {/* Popular Books */}
+              <Text h3 style={styles.title}>Popular Book</Text>
+              <FlatList
+                horizontal
+                data={data}
+                renderItem={({ item }) => (
+                  <BookCard
+                    {...this.props}
+                    id={item.id}
+                    name={item.name}
+                    cover={item.cover}
+                    description={item.description}
+                    horizontal={true}
+                  />
+                )}
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={item => item.id.toString()}
               />
-            )}
-            keyExtractor={item => item.id.toString()}
-            onRefresh={() => this.fetchBook()}
-            refreshing={isLoading}
-            onEndReached={this.nextPage}
-            onEndReachedThreshold={0.5}
-          />
+              {/* All Genres */}
+              <View style={styles.divider}/>
+              <Text h3 style={styles.title}>Genre Book</Text>
+              <FlatList
+                horizontal
+                data={genre}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() => this.viewGenre(item.id)}
+                  >
+                    <Badge
+                      value={item.name}
+                      badgeStyle={{ padding: 15 }}
+                      containerStyle={{ padding: 5 }}
+                    />
+                  </TouchableOpacity>
+                )}
+                showsHorizontalScrollIndicator={false}
+                keyExtractor={item => item.id.toString()}
+              />
+              <View style={styles.divider} />
+              <View style={styles.divider} />
+            </ScrollView>
+          </>
         )}
       </SafeAreaView>
     );
@@ -103,6 +143,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     height: deviceHeight,
+  },
+  body: {
+    paddingTop: 20,
+  },
+  title: {
+    textAlign: 'center',
+    marginBottom: 10,
+    color: '#183153',
+  },
+  divider: {
+    marginVertical: 10,
   },
 });
 
