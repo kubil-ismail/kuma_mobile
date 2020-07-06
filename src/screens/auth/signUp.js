@@ -1,7 +1,15 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { ActivityIndicator, Dimensions, SafeAreaView, ScrollView, StyleSheet, Text } from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  ToastAndroid,
+  View,
+} from 'react-native';
 import { Button, Image, Input } from 'react-native-elements';
 
 // Imports: Redux Actions
@@ -30,41 +38,43 @@ export class SignUp extends Component {
     if (email !== null && password !== null) {
       if (password.length >= 8) {
         if (password === password2) {
+          this.setState({ isLoading: true });
           axios.post(`${url}auth/signin`,{
             email, password,
           })
           .then((res) => {
             const { data } = res.data;
+            this.setState({ isLoading: false });
             this.props.reduxSignUp(data.email);
             this.props.navigation.navigate('verify');
           })
           .catch((err) => {
             const { data } = err.response;
+            ToastAndroid.show(data.message, ToastAndroid.SHORT);
             this.setState({
               isLoading: false,
               isError: true,
-              errorMsg: data.message,
             });
           });
         } else {
+          ToastAndroid.show('Password not match', ToastAndroid.SHORT);
           this.setState({
             isLoading: false,
             isError: true,
-            errorMsg: 'Password not match',
           });
         }
       } else {
+        ToastAndroid.show('Password must be greater than 8 characters', ToastAndroid.SHORT);
         this.setState({
           isLoading: false,
           isError: true,
-          errorMsg: 'password must be greater than 8 characters',
         });
       }
     } else {
+      ToastAndroid.show('Email & Password must filled', ToastAndroid.SHORT);
       this.setState({
         isLoading: false,
         isError: true,
-        errorMsg: 'Email & Password must filled',
       });
     }
   }
@@ -122,14 +132,15 @@ export class SignUp extends Component {
             title="Create new Account"
             loading={isLoading}
             onPress={() => this.signUp()}
-          />
-          <Text
-            // eslint-disable-next-line react-native/no-inline-styles
-            style={{ textAlign: 'center', marginTop: 10 }}
+            />
+
+          {/* eslint-disable-next-line react-native/no-inline-styles */}
+          <View style={{ marginTop: 20 }} />
+          <Button
+            title="Already have account"
+            type="clear"
             onPress={() => this.props.navigation.navigate('login')}
-          >
-            Already have account
-          </Text>
+          />
         </ScrollView>
       </SafeAreaView>
     );

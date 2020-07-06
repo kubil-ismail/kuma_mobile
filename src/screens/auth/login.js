@@ -7,7 +7,8 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
+  View,
+  ToastAndroid,
 } from 'react-native';
 import { Button, Image, Input  } from 'react-native-elements';
 import axios from 'axios';
@@ -59,17 +60,18 @@ export class Login extends Component {
         }
       })
       .catch((err) => {
+        const { data } = err.response;
+        ToastAndroid.show(data.message, ToastAndroid.SHORT);
         this.setState({
           isLoading: false,
           isError: true,
-          errorMsg: err.response.data.message,
         });
       });
     } else {
+      ToastAndroid.show('Email & Password must filled', ToastAndroid.SHORT);
       this.setState({
         isLoading: false,
         isError: true,
-        errorMsg: 'Email & Password must filled',
       });
     }
   }
@@ -116,13 +118,13 @@ export class Login extends Component {
             loading={isLoading}
             onPress={() => this.onLogin()}
           />
-          <Text
-            // eslint-disable-next-line react-native/no-inline-styles
-            style={{textAlign: 'center', marginTop: 10}}
+          {/* eslint-disable-next-line react-native/no-inline-styles */}
+          <View style={{ marginTop: 20 }} />
+          <Button
+            title="Create new account"
+            type="clear"
             onPress={() => this.props.navigation.navigate('sign-up')}
-          >
-            Create new account
-          </Text>
+          />
         </ScrollView>
       </SafeAreaView>
     );
