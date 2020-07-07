@@ -148,7 +148,7 @@ export default class Search extends Component {
                 onPress={() => this.showAlert()}
               />
             </View>
-            <View style={{flex: 7}}>
+            <View style={styles.body}>
               <FlatList
                 data={data}
                 renderItem={({ item }) => (
@@ -196,6 +196,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
+  },
+  body: {
+    flex: 7,
   },
   title: {
     textAlign: 'left',
