@@ -104,9 +104,11 @@ export class Favorite extends Component {
           text: 'Cancel',
           style: 'cancel',
         },
-        { text: 'OK', onPress: () => {
-          this.deleteFavorite(id);
-        }},
+        {
+          text: 'OK', onPress: () => {
+            this.deleteFavorite(id);
+          },
+        },
       ],
     );
   }

@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
-import { SearchBar, Image, Text } from 'react-native-elements';
+import { Button, SearchBar, Image, Text } from 'react-native-elements';
 import {
+  Alert,
   ActivityIndicator,
   Dimensions,
   FlatList,
@@ -63,6 +64,53 @@ export default class Search extends Component {
     }
   }
 
+  descSort = () => {
+    const { search } = this.state;
+    axios.get(`${url}book?search=${search}&limit=10&sort=1`)
+      .then((res) => {
+        const { data } = res;
+        this.setState({
+          data: data.data,
+          options: data.options,
+          isLoading: false,
+          isError: false,
+        });
+      }).catch(() => this.setState({ isError: true }));
+  }
+
+  onSort = (sort) => {
+    if (parseInt(sort, 10) === 2) {
+      // DESC
+      this.descSort();
+    } else {
+      // ASC
+      this.search();
+    }
+  };
+
+  showAlert = () => {
+    Alert.alert(
+      'Sort Book',
+      'Select sort list type',
+      [
+        {
+          text: 'Name A - Z', onPress: () => {
+            this.onSort(1);
+          },
+        },
+        {
+          text: 'Name Z - A', onPress: () => {
+            this.onSort(2);
+          },
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ],
+    );
+  }
+
   render() {
     const { data, search, isError, isLoading } = this.state;
     return (
@@ -81,7 +129,7 @@ export default class Search extends Component {
             <Text>Book Not Found</Text>
           </View>
         )}
-        {!isError && search.length === 0 && (
+        {!isError && search.length === 0 && isLoading && (
           <View style={styles.center}>
             <Image
               source={require('../assets/image/undraw_typewriter_i8xd.png')}
@@ -91,23 +139,35 @@ export default class Search extends Component {
           </View>
         )}
         {!isError && data.length >= 1 && (
-          <FlatList
-            data={data}
-            renderItem={({ item }) => (
-              <BookCard
-                {...this.props}
-                id={item.id}
-                name={item.name}
-                cover={item.cover}
-                description={item.description}
+          <>
+            <View style={styles.head}>
+              <Text h4 style={styles.title}>Search Result</Text>
+              <Button
+                type="clear"
+                title="Sort"
+                onPress={() => this.showAlert()}
               />
-            )}
-            keyExtractor={item => item.id.toString()}
-            onRefresh={() => this.search()}
-            refreshing={isLoading}
-            onEndReached={this.nextPage}
-            onEndReachedThreshold={0.5}
-          />
+            </View>
+            <View style={{flex: 7}}>
+              <FlatList
+                data={data}
+                renderItem={({ item }) => (
+                  <BookCard
+                    {...this.props}
+                    id={item.id}
+                    name={item.name}
+                    cover={item.cover}
+                    description={item.description}
+                  />
+                )}
+                keyExtractor={item => item.id.toString()}
+                onRefresh={() => this.search()}
+                refreshing={isLoading}
+                onEndReached={this.nextPage}
+                onEndReachedThreshold={0.5}
+              />
+            </View>
+          </>
         )}
       </SafeAreaView>
     );
@@ -130,5 +190,17 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  head: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+  },
+  title: {
+    textAlign: 'left',
+    marginTop: 10,
+    marginBottom: 10,
+    color: '#183153',
   },
 });
