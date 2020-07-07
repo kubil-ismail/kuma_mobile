@@ -46,12 +46,9 @@ export class Favorite extends Component {
     })
     .then((res) => {
       const { data } = res;
-      this.props.setFavorite({
+      this.setState({
         data: data.data,
         options: data.options,
-      });
-      this.setState({
-        data: this.props.favorite.data,
         isLoading: false,
         isError: false,
       });
@@ -60,8 +57,9 @@ export class Favorite extends Component {
   };
 
   nextPage = () => {
-    const { options } = this.props.favorite;
+    const { options } = this.state;
     if (options.next) {
+      this.setState({ isLoading: true });
       const { apikey, userId } = this.props.auth;
       axios.get(`${url}profile/favorite/${userId}?${options.next}`,{
         headers: {
@@ -70,12 +68,9 @@ export class Favorite extends Component {
       })
       .then((res) => {
         const { data } = res;
-        this.props.setFavorite({
+        this.setState({
           data: data.data,
           options: data.options,
-        });
-        this.setState({
-          data: this.props.favorite.data,
           isLoading: false,
           isError: false,
         });
@@ -93,6 +88,7 @@ export class Favorite extends Component {
     };
     axios.delete(`${url}favorite/${id}`, config)
     .then(() => {
+      this.setState({ isLoading: true });
       this.fetchFavorite();
       ToastAndroid.show('Delete successfuly', ToastAndroid.SHORT);
     })
@@ -124,7 +120,7 @@ export class Favorite extends Component {
   }
 
   render() {
-    const { isLoading, isError, data } = this.state;
+    const { data, isLoading, isError } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <Header />
@@ -186,7 +182,6 @@ const mapStateToProps = (state) => {
   // Redux Store --> Component
   return {
     auth: state.authReducer,
-    favorite: state.favoriteReducer,
   };
 };
 

@@ -51,6 +51,7 @@ export default class Search extends Component {
   nextPage = () => {
     const { options } = this.state;
     if (options.next) {
+      this.setState({ isLoading: true });
       axios.get(`${url}book?${options.next}`)
         .then((res) => {
           const { data } = res;
