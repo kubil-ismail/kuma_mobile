@@ -1,7 +1,14 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
-import { Dimensions, SafeAreaView, View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  Dimensions,
+  SafeAreaView,
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import { Avatar, ListItem, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import axios from 'axios';
@@ -102,7 +109,9 @@ export class User extends Component {
               key={1}
               title={email}
               leftIcon={
-                <Icon solid  name="envelope" size={20} />
+                <View style={styles.icon}>
+                  <Icon solid name="envelope" size={20} color="#6d6d6d" />
+                </View>
               }
               bottomDivider
             />
@@ -110,7 +119,9 @@ export class User extends Component {
               key={2}
               title={facebook}
               leftIcon={
-                <Icon solid name="facebook-f" size={20} />
+                <View style={styles.icon}>
+                  <Icon solid name="facebook" size={20} color="#6d6d6d" />
+                </View>
               }
               bottomDivider
             />
@@ -118,7 +129,9 @@ export class User extends Component {
               key={3}
               title={instagram}
               leftIcon={
-                <Icon solid name="instagram" size={20} />
+                <View style={styles.icon}>
+                  <Icon solid name="instagram" size={20} color="#6d6d6d" />
+                </View>
               }
               bottomDivider
             />
@@ -126,7 +139,9 @@ export class User extends Component {
               key={4}
               title={twitter}
               leftIcon={
-                <Icon solid name="twitter" size={20} />
+                <View style={styles.icon}>
+                  <Icon solid name="twitter" size={20} color="#6d6d6d" />
+                </View>
               }
               bottomDivider
             />
@@ -135,7 +150,9 @@ export class User extends Component {
                 key={7}
                 title="Edit Profile"
                 leftIcon={
-                  <Icon solid name="edit" size={15} />
+                  <View style={styles.icon}>
+                    <Icon solid name="edit" size={15} color="#6d6d6d" />
+                  </View>
                 }
                 bottomDivider
               />
@@ -145,7 +162,9 @@ export class User extends Component {
                 key={8}
                 title="Log out"
                 leftIcon={
-                  <Icon solid name="sign-out-alt" size={20} />
+                  <View style={styles.icon}>
+                    <Icon solid name="sign-out-alt" size={20} color="#6d6d6d" />
+                  </View>
                 }
                 bottomDivider
               />
@@ -167,6 +186,10 @@ const styles = StyleSheet.create({
   body: {
     alignItems: 'center',
     marginVertical: 20,
+  },
+  icon: {
+    alignItems: 'center',
+    width: 20,
   },
 });
 
