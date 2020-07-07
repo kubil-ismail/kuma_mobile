@@ -20,6 +20,7 @@ import { detail } from '../redux/actions/bookActions';
 
 // Import component
 import Error from '../components/error';
+import Loader from '../components/loader';
 
 const url = 'http://192.168.1.4:8000/';
 
@@ -115,6 +116,7 @@ export class Detail extends Component {
     const { isError, isLoading, data, reviews } = this.state;
     return (
       <SafeAreaView style={styles.container}>
+        <Loader isLoading={isLoading} />
         {isError && (
           <Error />
         )}

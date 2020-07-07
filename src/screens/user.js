@@ -21,6 +21,7 @@ import { login } from '../redux/actions/authActions';
 // Import component
 import Header from '../components/header';
 import Error from '../components/error';
+import Loader from '../components/loader';
 
 const url = 'http://192.168.1.4:8000/';
 
@@ -85,8 +86,8 @@ export class User extends Component {
     const { name, email, facebook, instagram, twitter } = this.props.profile;
     return (
       <SafeAreaView style={styles.container}>
+        <Loader isLoading={isLoading} />
         <Header />
-
         {isError && (
           <Error />
         )}

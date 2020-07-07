@@ -14,6 +14,7 @@ import axios from 'axios';
 
 // import component
 import BookCard from '../components/book';
+import Loader from '../components/loader';
 
 const url = 'http://192.168.1.4:8000/';
 
@@ -24,7 +25,7 @@ export default class Search extends Component {
       search: '',
       data: [],
       options: [],
-      isLoading: true,
+      isLoading: false,
       onSearch: true,
       isError: false,
     };
@@ -36,6 +37,7 @@ export default class Search extends Component {
 
   search = () => {
     const { search } = this.state;
+    this.setState({ isLoading: true });
     axios.get(`${url}book?search=${search}&limit=10`)
     .then((res) => {
       const { data } = res;
@@ -125,12 +127,13 @@ export default class Search extends Component {
           value={search}
           onSubmitEditing={this.search}
         />
+        <Loader isLoading={isLoading} />
         {isError && (
           <View style={styles.center}>
             <Text>Book Not Found</Text>
           </View>
         )}
-        {!isError && search.length === 0 && isLoading && (
+        {!isError && search.length === 0 && data.length === 0 && (
           <View style={styles.center}>
             <Image
               source={require('../assets/image/undraw_typewriter_i8xd.png')}

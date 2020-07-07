@@ -18,6 +18,7 @@ import { book } from '../redux/actions/bookActions';
 // import component
 import BookCard from '../components/book';
 import Error from '../components/error';
+import Loader from '../components/loader';
 
 const url = 'http://192.168.1.4:8000/';
 
@@ -62,6 +63,7 @@ export class Genre extends Component {
     const { isError, isLoading } = this.state;
     return (
       <SafeAreaView style={styles.container}>
+        <Loader isLoading={isLoading} />
         {isError && (
           <Error />
         )}

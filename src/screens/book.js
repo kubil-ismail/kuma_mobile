@@ -22,6 +22,7 @@ import { book } from '../redux/actions/bookActions';
 import BookCard from '../components/book';
 import Header from '../components/header';
 import Error from '../components/error';
+import Loader from '../components/loader';
 
 const url = 'http://192.168.1.4:8000/';
 
@@ -83,6 +84,7 @@ export class Book extends Component {
     const { isError, isLoading, data, genre } = this.state;
     return (
       <SafeAreaView style={styles.container}>
+        <Loader isLoading={isLoading} />
         <Header />
         {isError && (
           <Error />
@@ -141,6 +143,9 @@ export class Book extends Component {
 const deviceHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
+  spinnerTextStyle: {
+    color: '#FFF',
+  },
   container: {
     flex: 1,
     height: deviceHeight,
