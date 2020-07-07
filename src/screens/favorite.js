@@ -13,7 +13,7 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { login } from '../redux/actions/authActions';
+import { favorite } from '../redux/actions/favoriteActions';
 
 // Import component
 import Header from '../components/header';
@@ -46,9 +46,12 @@ export class Favorite extends Component {
     })
     .then((res) => {
       const { data } = res;
-      this.setState({
+      this.props.setFavorite({
         data: data.data,
         options: data.options,
+      });
+      this.setState({
+        data: this.props.favorite.data,
         isLoading: false,
         isError: false,
       });
@@ -57,7 +60,7 @@ export class Favorite extends Component {
   };
 
   nextPage = () => {
-    const { options } = this.state;
+    const { options } = this.props.favorite;
     if (options.next) {
       const { apikey, userId } = this.props.auth;
       axios.get(`${url}profile/favorite/${userId}?${options.next}`,{
@@ -67,9 +70,12 @@ export class Favorite extends Component {
       })
       .then((res) => {
         const { data } = res;
-        this.setState({
+        this.props.setFavorite({
           data: data.data,
           options: data.options,
+        });
+        this.setState({
+          data: this.props.favorite.data,
           isLoading: false,
           isError: false,
         });
@@ -118,7 +124,7 @@ export class Favorite extends Component {
   }
 
   render() {
-    const { data, isLoading, isError } = this.state;
+    const { isLoading, isError, data } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <Header />
@@ -180,6 +186,7 @@ const mapStateToProps = (state) => {
   // Redux Store --> Component
   return {
     auth: state.authReducer,
+    favorite: state.favoriteReducer,
   };
 };
 
@@ -188,7 +195,7 @@ const mapDispatchToProps = (dispatch) => {
   // Action
   return {
     // Login
-    reduxLogin: (trueFalse) => dispatch(login(trueFalse)),
+    setFavorite: (data) => dispatch(favorite(data)),
   };
 };
 

@@ -16,7 +16,7 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { login } from '../redux/actions/authActions';
+import { detail } from '../redux/actions/bookActions';
 
 // Import component
 import Error from '../components/error';
@@ -46,11 +46,13 @@ export class Detail extends Component {
     axios.get(`${url}book/${bookId}`)
     .then((res) => {
       const { data } = res;
-      this.setState({
+      this.props.setDetail({
         data: data.data[0],
-        options: data.options,
-        isLoading: false,
       });
+      this.setState({
+        isLoading: false,
+        data: this.props.details,
+       });
     }).catch(() => this.setState({ isError: true }));
   };
 
@@ -252,6 +254,7 @@ const mapStateToProps = (state) => {
   // Redux Store --> Component
   return {
     auth: state.authReducer,
+    details: state.bookReducer.detail,
   };
 };
 
@@ -259,8 +262,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
-    // Login
-    reduxLogin: (trueFalse) => dispatch(login(trueFalse)),
+    // Detail
+    setDetail: (trueFalse) => dispatch(detail(trueFalse)),
   };
 };
 

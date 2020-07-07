@@ -12,11 +12,11 @@ import {
 } from 'react-native';
 import { Badge, Text } from 'react-native-elements';
 import axios from 'axios';
-// import Icon from 'react-native-vector-icons/FontAwesome5';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { login } from '../redux/actions/authActions';
+import { book } from '../redux/actions/bookActions';
+import { genre } from '../redux/actions/genreActions';
 
 // import component
 import BookCard from '../components/book';
@@ -32,7 +32,6 @@ export class Book extends Component {
       search: '',
       data: [],
       options: [],
-      genre: [],
       isLoading: true,
       onSearch: true,
       isError: false,
@@ -47,11 +46,11 @@ export class Book extends Component {
     axios.get(`${url}book?limit=10&page=${page}`)
     .then((res) => {
       const { data } = res;
-      this.setState({
+      this.props.setBook({
         data: data.data,
         options: data.options,
-        isLoading: false,
       });
+      this.setState({ isLoading: false });
     })
     .catch(() => this.setState({ isError: true }));
   };
@@ -60,8 +59,9 @@ export class Book extends Component {
     axios.get(`${url}genre`)
     .then((res) => {
       const { data } = res;
-      this.setState({
-        genre: data.data,
+      this.props.setGenre({
+        data: data.data,
+        options: data.options,
       });
     })
     .catch(() => this.setState({ isError: true }));
@@ -80,7 +80,9 @@ export class Book extends Component {
   }
 
   render() {
-    const { isError, isLoading, data, genre } = this.state;
+    const { data } = this.props.books;
+    const { genres } = this.props.genres;
+    const { isError, isLoading } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <Header />
@@ -113,7 +115,7 @@ export class Book extends Component {
               <Text h3 style={styles.title}>Genre Book</Text>
               <FlatList
                 horizontal
-                data={genre}
+                data={genres}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     onPress={() => this.viewGenre(item.id, item.name)}
@@ -163,6 +165,8 @@ const mapStateToProps = (state) => {
   // Redux Store --> Component
   return {
     auth: state.authReducer,
+    books: state.bookReducer,
+    genres: state.genreReducer,
   };
 };
 
@@ -170,8 +174,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
-    // Login
-    reduxLogin: (trueFalse) => dispatch(login(trueFalse)),
+    // Books
+    setBook: (request) => dispatch(book(request)),
+    // Genres
+    setGenre: (request) => dispatch(genre(request)),
   };
 };
 

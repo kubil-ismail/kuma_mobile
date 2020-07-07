@@ -13,7 +13,7 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { login } from '../redux/actions/authActions';
+import { book } from '../redux/actions/bookActions';
 
 // import component
 import BookCard from '../components/book';
@@ -44,11 +44,11 @@ export class Genre extends Component {
     axios.get(`${url}book/genre/${genreId}?limit=10&page=${page}`)
       .then((res) => {
         const { data } = res;
-        this.setState({
+        this.props.setBook({
           data: data.data,
           options: data.options,
-          isLoading: false,
         });
+        this.setState({ isLoading: false });
       })
       .catch(() => this.setState({ isError: true }));
   };
@@ -58,7 +58,8 @@ export class Genre extends Component {
   }
 
   render() {
-    const { isError, isLoading, data } = this.state;
+    const { data } = this.props.books;
+    const { isError, isLoading } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         {isError && (
@@ -111,6 +112,7 @@ const mapStateToProps = (state) => {
   // Redux Store --> Component
   return {
     auth: state.authReducer,
+    books: state.bookReducer,
   };
 };
 
@@ -118,8 +120,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
-    // Login
-    reduxLogin: (trueFalse) => dispatch(login(trueFalse)),
+    // Books
+    setBook: (request) => dispatch(book(request)),
   };
 };
 
