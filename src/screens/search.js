@@ -69,6 +69,7 @@ export default class Search extends Component {
 
   descSort = () => {
     const { search } = this.state;
+    this.setState({ isLoading: true });
     axios.get(`${url}book?search=${search}&limit=10&sort=1`)
       .then((res) => {
         const { data } = res;
