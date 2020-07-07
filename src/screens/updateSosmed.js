@@ -30,7 +30,6 @@ export class Update extends Component {
       facebook2: null,
       instagram2: null,
       twitter2: null,
-      fullname: null,
     };
     const { loggedIn, apikey, userId } = this.props.auth;
     if (!loggedIn && !apikey && !userId) {
@@ -41,18 +40,20 @@ export class Update extends Component {
   onUpdate = () => {
     const { apikey, userId } = this.props.auth;
     const { name, email, facebook, instagram, twitter } = this.props.profile;
-    const { facebook2, instagram2, twitter2, fullname } = this.state;
+    const { facebook2, instagram2, twitter2 } = this.state;
     const config = {
       headers: {
         Authorization: apikey,
       },
     };
-    axios.patch(`${url}profile/${userId}`, {
-      fullname: fullname || name,
+    axios.patch(`${url}sosmed/${userId}`,{
+      facebook: facebook2 || facebook,
+      instagram: instagram2 || instagram,
+      twitter: twitter2 || twitter,
     }, config)
-    .then((res) => {
+    .then(() => {
       this.props.updateProfile({
-        name: fullname || name,
+        name: name,
         email: email,
         facebook: facebook2 || facebook,
         instagram: instagram2 || instagram,
@@ -64,7 +65,7 @@ export class Update extends Component {
   }
 
   render() {
-    const { name } = this.props.profile;
+    const { name, facebook, instagram, twitter } = this.props.profile;
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView>
@@ -82,22 +83,32 @@ export class Update extends Component {
           </View>
           <View style={{ paddingHorizontal: 10, marginBottom: 20 }}>
             <Input
-              placeholder="Fullname"
+              placeholder="Facebook"
               leftIcon={
-                <Icon name="user" size={20} />
+                <Icon solid name="facebook" size={20} />
               }
-              defaultValue={name}
-              onChangeText={(e) => this.setState({ fullname: e })}
+              defaultValue={facebook}
+              onChangeText={(e) => this.setState({ facebook2: e })}
+            />
+            <Input
+              placeholder="Instagram"
+              leftIcon={
+                <Icon solid name="instagram" size={20} />
+              }
+              defaultValue={instagram}
+              onChangeText={(e) => this.setState({ instagram2: e })}
+            />
+            <Input
+              placeholder="Twitter"
+              leftIcon={
+                <Icon solid name="twitter" size={20} />
+              }
+              defaultValue={twitter}
+              onChangeText={(e) => this.setState({ twitter2: e })}
             />
             <Button
               title="Update"
               onPress={this.onUpdate}
-            />
-            <View style={styles.divider} />
-            <Button
-              type="outline"
-              title="Update Social Media"
-              onPress={() => this.props.navigation.navigate('Social Media')}
             />
           </View>
         </ScrollView>
@@ -116,9 +127,6 @@ const styles = StyleSheet.create({
   body: {
     alignItems: 'center',
     marginVertical: 20,
-  },
-  divider: {
-    marginVertical: 10,
   },
 });
 

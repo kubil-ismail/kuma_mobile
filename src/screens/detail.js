@@ -166,6 +166,7 @@ export class Detail extends Component {
             ))}
             <View style={styles.bottom}>
               <Input
+                value={this.state.InputReview}
                 placeholder="Add review..."
                 onChangeText={(e) => this.setState({ InputReview: e })}
               />

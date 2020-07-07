@@ -66,7 +66,7 @@ export class User extends Component {
   }
 
   update = () => {
-    this.props.navigation.navigate('Edit profile');
+    this.props.navigation.navigate('Profile');
   }
 
   componentDidMount = () => {

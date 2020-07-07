@@ -15,7 +15,8 @@ import Verify from '../screens/auth/verify';
 import Home from '../screens/book';
 import Favorite from '../screens/favorite';
 import User from '../screens/user';
-import Update from '../screens/updateUser';
+import UpdateSosmed from '../screens/updateSosmed';
+import UpdateUser from '../screens/updateUser';
 import Detail from '../screens/detail';
 import Genre from '../screens/genre';
 import Search from '../screens/search';
@@ -43,7 +44,8 @@ export default function route() {
         component={Genre}
         name={'Genre'}
       />
-      <Stack.Screen component={Update} name={'Edit profile'} />
+      <Stack.Screen component={UpdateSosmed} name={'Social Media'} />
+      <Stack.Screen component={UpdateUser} name={'Profile'} />
       <Stack.Screen
         options={{headerShown: false}}
         component={Welcome}
