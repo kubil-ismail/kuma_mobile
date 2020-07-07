@@ -1,16 +1,13 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
 import {
   Dimensions,
   FlatList,
   SafeAreaView,
   StyleSheet,
-  ScrollView,
   View,
-  TouchableOpacity,
 } from 'react-native';
-import { Badge, Text } from 'react-native-elements';
+import { Text } from 'react-native-elements';
 import axios from 'axios';
 // import Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -20,7 +17,6 @@ import { login } from '../redux/actions/authActions';
 
 // import component
 import BookCard from '../components/book';
-import Header from '../components/header';
 import Error from '../components/error';
 
 const url = 'http://192.168.1.4:8000/';
