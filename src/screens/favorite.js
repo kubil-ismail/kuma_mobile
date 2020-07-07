@@ -1,6 +1,13 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
-import { Dimensions, FlatList, SafeAreaView, StyleSheet } from 'react-native';
+import {
+  Alert,
+  Dimensions,
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  ToastAndroid,
+} from 'react-native';
 import { ListItem } from 'react-native-elements';
 import axios from 'axios';
 
@@ -71,6 +78,39 @@ export class Favorite extends Component {
     }
   }
 
+  deleteFavorite = (id) => {
+    const { apikey } = this.props.auth;
+    const config = {
+      headers: {
+        Authorization: apikey,
+      },
+    };
+    axios.delete(`${url}favorite/${id}`, config)
+    .then(() => {
+      this.fetchFavorite();
+      ToastAndroid.show('Delete successfuly', ToastAndroid.SHORT);
+    })
+    .catch(() => {
+      ToastAndroid.show('Something wrong. Try again !', ToastAndroid.SHORT);
+    });
+  }
+
+  showAlert = (id) => {
+    Alert.alert(
+      'Are you sure ?',
+      'Remove from favorite list',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        { text: 'OK', onPress: () => {
+          this.deleteFavorite(id);
+        }},
+      ],
+    );
+  }
+
   componentDidMount = () => {
     this.fetchFavorite();
   }
@@ -80,7 +120,6 @@ export class Favorite extends Component {
     return (
       <SafeAreaView style={styles.container}>
         <Header />
-
         {isError && (
           <Error/>
         )}
@@ -98,6 +137,7 @@ export class Favorite extends Component {
                   bookId: item.id,
                   bookName: item.name,
                 })}
+                onLongPress={() => this.showAlert(item.book_favorites_id)}
                 bottomDivider
                 chevron
               />
