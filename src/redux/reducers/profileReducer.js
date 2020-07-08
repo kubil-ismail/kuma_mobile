@@ -9,14 +9,22 @@ const initialState = {
 };
 
 // Reducers (Modifies The State And Returns A New State)
-const authReducer = (state = initialState, action) => {
+const profileReducer = (state = initialState, action) => {
   switch (action.type) {
-    // PATCH
+    // SET_PROFILE
     case 'SET_PROFILE': {
       const { name, facebook, instagram, twitter } = action.payload;
       return {
         ...state,
         ...{ name, facebook, instagram, twitter },
+      };
+    }
+    // SET_EMAIL
+    case 'SET_EMAIL': {
+      const { email } = action.payload;
+      return {
+        ...state,
+        ...{ email },
       };
     }
     // Default
@@ -27,4 +35,4 @@ const authReducer = (state = initialState, action) => {
 };
 
 // Exports
-export default authReducer;
+export default profileReducer;

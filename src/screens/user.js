@@ -15,7 +15,7 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { SET_PROFILE } from '../redux/actions/profileActions';
+import { SET_PROFILE, SET_EMAIL } from '../redux/actions/profileActions';
 import { logout } from '../redux/actions/authActions';
 
 // Import component
@@ -51,11 +51,11 @@ export class User extends Component {
       const { data } = res.data;
       this.props._SET_PROFILE({
         name: data[0].fullname,
-        email: data[0].email,
         facebook: data[0].facebook,
         instagram: data[0].instagram,
         twitter: data[0].twitter,
       });
+      this.props._SET_EMAIL({ email: data[0].email });
       this.setState({
         isLoading: false,
         isError: false,
@@ -205,6 +205,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     // UPDATE PROFILE
     _SET_PROFILE: (request) => dispatch(SET_PROFILE(request)),
+    // UPDATE PROFILE
+    _SET_EMAIL: (request) => dispatch(SET_EMAIL(request)),
+    // Logout
     _logout: (trueFalse) => dispatch(logout(trueFalse)),
   };
 };
