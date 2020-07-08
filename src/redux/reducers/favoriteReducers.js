@@ -2,9 +2,8 @@
 
 // Initial State
 const initialState = {
-  data: [],
-  options: [],
-  isLoading: true,
+  favorite_data: [],
+  favorite_option: [],
   isError: false,
   errMsg: null,
 };
@@ -13,13 +12,14 @@ const initialState = {
 const favoriteReducer = (state = initialState, action) => {
   switch (action.type) {
     // SET FAVORITE
-    case 'FAVORITE': {
+    case 'SET_FAVORITE': {
       const { data, options } = action.payload;
       return {
         // State
         ...state,
         // Redux Store
-        data, options,
+        favorite_data: data,
+        favorite_option: options,
       };
     }
     // Default

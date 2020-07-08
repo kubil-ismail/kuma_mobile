@@ -12,7 +12,7 @@ const initialState = {
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     // PATCH
-    case 'PATCH': {
+    case 'SET_PROFILE': {
       const { name, facebook, instagram, twitter } = action.payload;
       return {
         ...state,

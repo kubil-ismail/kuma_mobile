@@ -13,7 +13,7 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { favorite } from '../redux/actions/favoriteActions';
+import { SET_FAVORITE } from '../redux/actions/favoriteActions';
 
 // Import component
 import Header from '../components/header';
@@ -47,34 +47,34 @@ export class Favorite extends Component {
     })
     .then((res) => {
       const { data } = res;
-      this.props.setFavorite({
+      this.props._SET_FAVORITE({
         data: data.data,
         options: data.options,
       });
-      this.setState({ isLoading: false, isError: false });
+      this.onComplete();
     })
-    .catch(() => this.setState({ isError: true, isLoading: false }));
+    .catch(() => this.onError());
   };
 
   nextPage = () => {
-    const { options } = this.state;
-    if (options.next) {
+    const { favorite_option } = this.props.favorites;
+    if (favorite_option.next) {
       this.setState({ isLoading: true });
       const { apikey, userId } = this.props.auth;
-      axios.get(`${url}profile/favorite/${userId}?${options.next}`,{
+      axios.get(`${url}profile/favorite/${userId}?${favorite_option.next}`,{
         headers: {
           Authorization: apikey,
         },
       })
       .then((res) => {
         const { data } = res;
-        this.props.setFavorite({
+        this.props._SET_FAVORITE({
           data: data.data,
           options: data.options,
         });
-        this.setState({ isLoading: false, isError: false });
+        this.onComplete();
       })
-      .catch(() => this.setState({ isError: true, isLoading: false  }));
+        .catch(() => this.onError());
     }
   }
 
@@ -114,12 +114,20 @@ export class Favorite extends Component {
     );
   }
 
+  onComplete = () => {
+    this.setState({ isLoading: false, isError: false });
+  }
+
+  onError = () => {
+    this.setState({ isError: true, isLoading: false });
+  }
+
   componentDidMount = () => {
     this.fetchFavorite();
   }
 
   render() {
-    const { data } = this.props.favorites;
+    const { favorite_data } = this.props.favorites;
     const { isLoading, isError } = this.state;
     return (
       <SafeAreaView style={styles.container}>
@@ -131,7 +139,7 @@ export class Favorite extends Component {
 
         {!isError && (
           <FlatList
-            data={data}
+            data={favorite_data}
             renderItem={({ item }) => (
               <ListItem
                 key={item.id}
@@ -191,8 +199,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
-    // Login
-    setFavorite: (data) => dispatch(favorite(data)),
+    // SET_FAVORITE
+    _SET_FAVORITE: (data) => dispatch(SET_FAVORITE(data)),
   };
 };
 

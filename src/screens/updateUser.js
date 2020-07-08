@@ -15,7 +15,7 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { profile } from '../redux/actions/profileActions';
+import { SET_PROFILE } from '../redux/actions/profileActions';
 
 const url = 'http://192.168.1.4:8000/';
 
@@ -50,8 +50,8 @@ export class Update extends Component {
     axios.patch(`${url}profile/${userId}`, {
       fullname: fullname || name,
     }, config)
-    .then((res) => {
-      this.props.updateProfile({
+    .then(() => {
+      this.props._SET_PROFILE({
         name: fullname || name,
         email: email,
         facebook: facebook2 || facebook,
@@ -136,7 +136,7 @@ const mapDispatchToProps = (dispatch) => {
   // Action
   return {
     // UPDATE PROFILE
-    updateProfile: (request) => dispatch(profile(request)),
+    _SET_PROFILE: (request) => dispatch(SET_PROFILE(request)),
   };
 };
 

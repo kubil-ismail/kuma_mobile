@@ -15,8 +15,8 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { profile } from '../redux/actions/profileActions';
-import { login } from '../redux/actions/authActions';
+import { SET_PROFILE } from '../redux/actions/profileActions';
+import { logout } from '../redux/actions/authActions';
 
 // Import component
 import Header from '../components/header';
@@ -49,7 +49,7 @@ export class User extends Component {
     })
     .then((res) => {
       const { data } = res.data;
-      this.props.updateProfile({
+      this.props._SET_PROFILE({
         name: data[0].fullname,
         email: data[0].email,
         facebook: data[0].facebook,
@@ -65,11 +65,7 @@ export class User extends Component {
   }
 
   onLogout = () => {
-    this.props.reduxLogin({
-      status: false,
-      apiKey: null,
-      userId: null,
-    });
+    this.props._logout();
     this.props.navigation.navigate('welcome');
   }
 
@@ -161,7 +157,7 @@ export class User extends Component {
             <TouchableOpacity onPress={() => this.onLogout()}>
               <ListItem
                 key={8}
-                title="Log out"
+                title="Log out" 
                 leftIcon={
                   <View style={styles.icon}>
                     <Icon solid name="sign-out-alt" size={20} color="#6d6d6d" />
@@ -208,8 +204,8 @@ const mapDispatchToProps = (dispatch) => {
   // Action
   return {
     // UPDATE PROFILE
-    updateProfile: (request) => dispatch(profile(request)),
-    reduxLogin: (trueFalse) => dispatch(login(trueFalse)),
+    _SET_PROFILE: (request) => dispatch(SET_PROFILE(request)),
+    _logout: (trueFalse) => dispatch(logout(trueFalse)),
   };
 };
 
