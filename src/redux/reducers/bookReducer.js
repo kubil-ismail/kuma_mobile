@@ -10,21 +10,40 @@ const initialState = {
   search_option: [],
   genre_book_data: [],
   genre_book_options: [],
-  isLoading: true,
-  isError: false,
-  errMsg: null,
+  book_loading: true,
+  book_err: false,
+  book_msg: null,
 };
 
 // Reducers (Modifies The State And Returns A New State)
 const bookReducer = (state = initialState, action) => {
   switch (action.type) {
     // SET BOOKS
-    case 'SET_BOOK': {
-      const { data, options } = action.payload;
+    case 'SET_BOOK_PENDING': {
       return {
         // State
         ...state,
         // Redux Store
+        book_loading: true,
+      };
+    }
+    case 'SET_BOOK_REJECTED': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        book_loading: false,
+        book_err: true,
+        book_msg: "Can't get data from server",
+      };
+    }
+    case 'SET_BOOK_FULFILLED': {
+      const { data, options } = action.payload.data;
+      return {
+        // State
+        ...state,
+        // Redux Store
+        book_loading: false,
         book_data: data,
         book_option: options,
       };

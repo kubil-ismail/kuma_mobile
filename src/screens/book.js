@@ -9,8 +9,6 @@ import {
   View,
 } from 'react-native';
 import { Text } from 'react-native-elements';
-import axios from 'axios';
-// import Icon from 'react-native-vector-icons/FontAwesome5';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
@@ -21,10 +19,7 @@ import { SET_GENRE } from '../redux/actions/genreActions';
 import BookCard from '../components/book';
 import GenreButton from '../components/genre';
 import Header from '../components/header';
-import Error from '../components/error';
 import Loader from '../components/loader';
-
-const url = 'http://192.168.1.4:8000/';
 
 export class Book extends Component {
   constructor(props) {
@@ -39,30 +34,12 @@ export class Book extends Component {
     }
   }
 
-  fetchBook = (page = 1) => {
-    axios.get(`${url}book?limit=10&page=${page}`)
-    .then((res) => {
-      const { data } = res;
-      this.props._SET_BOOK({
-        data: data.data,
-        options: data.options,
-      });
-      this.setState({ isLoading: false });
-    })
-    .catch(() => this.onError());
+  fetchBook = async (page = 1) => {
+    this.props._SET_BOOK({ page: page });
   };
 
   fetchGenre = () => {
-    axios.get(`${url}genre`)
-    .then((res) => {
-      const { data } = res;
-      this.props._SET_GENRE({
-        data: data.data,
-        options: data.options,
-      });
-      this.setState({ isLoading: false });
-    })
-    .catch(() => this.onError() );
+    this.props._SET_GENRE();
   };
 
   onError = () => {
@@ -78,20 +55,19 @@ export class Book extends Component {
   }
 
   render() {
-    const { isError, isLoading } = this.state;
-    const { genre_data } = this.props.genres;
-    const { book_data } = this.props.books;
+    const { genre_data, genre_loading, genre_err } = this.props.genres;
+    const { book_data, book_loading, book_err } = this.props.books;
     return (
       <SafeAreaView style={styles.container}>
-        <Loader isLoading={isLoading} />
+        <Loader isLoading={book_loading || genre_loading} />
         <Header />
-        {isError && (
+        {/* {isError && (
           <Error />
-        )}
-        {!isError && !isLoading && (
-          <>
-            <ScrollView style={styles.body}>
-              {/* Popular Books */}
+        )} */}
+        <ScrollView style={styles.body}>
+          {/* Popular Books */}
+          {!book_loading && !book_err && (
+            <>
               <Text h3 style={styles.title}>Popular Book</Text>
               <FlatList
                 horizontal
@@ -109,7 +85,11 @@ export class Book extends Component {
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={item => item.id.toString()}
               />
-              {/* All Genres */}
+            </>
+          )}
+          {/* All Genres */}
+          {!genre_loading && !genre_err && (
+            <>
               <View style={styles.divider}/>
               <Text h3 style={styles.title}>Genre Book</Text>
               <FlatList
@@ -125,11 +105,11 @@ export class Book extends Component {
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={item => item.id.toString()}
               />
-              <View style={styles.divider} />
-              <View style={styles.divider} />
-            </ScrollView>
-          </>
-        )}
+            </>
+          )}
+          <View style={styles.divider} />
+          <View style={styles.divider} />
+        </ScrollView>
       </SafeAreaView>
     );
   }

@@ -1,12 +1,10 @@
 /* eslint-disable prettier/prettier */
+import {get} from '../../helper/http';
 
 // SET_BOOK
 export const SET_BOOK = (request) => ({
   type: 'SET_BOOK',
-  payload: {
-    data: request.data,
-    options: request.options,
-  },
+  payload: get({ url: `book?limit=10&page=${request.page}` }),
 });
 
 // SET_DETAIL
