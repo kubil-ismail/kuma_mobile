@@ -17,6 +17,7 @@ import axios from 'axios';
 // Imports: Redux Actions
 import { connect } from 'react-redux';
 import { book } from '../redux/actions/bookActions';
+import { genre } from '../redux/actions/genreActions';
 
 // import component
 import BookCard from '../components/book';
@@ -48,24 +49,26 @@ export class Book extends Component {
     axios.get(`${url}book?limit=10&page=${page}`)
     .then((res) => {
       const { data } = res;
-      this.setState({
+      this.props.setBooks({
         data: data.data,
         options: data.options,
-        isLoading: false,
       });
+      this.setState({ isLoading: false });
     })
-    .catch(() => this.setState({ isError: true }));
+    .catch(() => this.setState({ isError: true, isLoading: false }));
   };
 
   fetchGenre = () => {
     axios.get(`${url}genre`)
     .then((res) => {
       const { data } = res;
-      this.setState({
-        genre: data.data,
+      this.props.setGenres({
+        data: data.data,
+        options: data.options,
       });
+      this.setState({ isLoading: false });
     })
-    .catch(() => this.setState({ isError: true }));
+    .catch(() => this.setState({ isError: true, isLoading: false }));
   };
 
   viewGenre = (id, name) => {
@@ -81,7 +84,7 @@ export class Book extends Component {
   }
 
   render() {
-    const { isError, isLoading, data, genre } = this.state;
+    const { isError, isLoading } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <Loader isLoading={isLoading} />
@@ -96,7 +99,7 @@ export class Book extends Component {
               <Text h3 style={styles.title}>Popular Book</Text>
               <FlatList
                 horizontal
-                data={data}
+                data={this.props.books.data}
                 renderItem={({ item }) => (
                   <BookCard
                     {...this.props}
@@ -115,7 +118,7 @@ export class Book extends Component {
               <Text h3 style={styles.title}>Genre Book</Text>
               <FlatList
                 horizontal
-                data={genre}
+                data={this.props.genres.data}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     onPress={() => this.viewGenre(item.id, item.name)}
@@ -168,6 +171,8 @@ const mapStateToProps = (state) => {
   // Redux Store --> Component
   return {
     auth: state.authReducer,
+    books: state.bookReducer,
+    genres: state.genreReducer,
   };
 };
 
@@ -176,7 +181,9 @@ const mapDispatchToProps = (dispatch) => {
   // Action
   return {
     // Books
-    setBooks: (trueFalse) => dispatch(book(trueFalse)),
+    setBooks: (request) => dispatch(book(request)),
+    // Genres
+    setGenres: (request) => dispatch(genre(request)),
   };
 };
 

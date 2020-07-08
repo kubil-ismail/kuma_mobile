@@ -13,7 +13,7 @@ const initialState = {
 const favoriteReducer = (state = initialState, action) => {
   switch (action.type) {
     // SET FAVORITE
-    case 'SET': {
+    case 'FAVORITE': {
       const { data, options } = action.payload;
       return {
         // State

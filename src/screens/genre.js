@@ -13,7 +13,7 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { book } from '../redux/actions/bookActions';
+import { detail_genre } from '../redux/actions/bookActions';
 
 // import component
 import BookCard from '../components/book';
@@ -59,7 +59,7 @@ export class Genre extends Component {
   }
 
   render() {
-    const { data } = this.props.books;
+    const { detail_genre } = this.props.books;
     const { isError, isLoading } = this.state;
     return (
       <SafeAreaView style={styles.container}>
@@ -67,15 +67,15 @@ export class Genre extends Component {
         {isError && (
           <Error />
         )}
-        {!isError && !isLoading && data.length === undefined && (
+        {!isError && !isLoading && detail_genre.length === undefined && (
           <View style={styles.center}>
             <Text>Book Not Found</Text>
           </View>
         )}
-        {!isError && !isLoading && data.length >= 1 && (
+        {!isError && !isLoading && detail_genre.length >= 1 && (
           <>
             <FlatList
-              data={data}
+              data={detail_genre}
               renderItem={({ item }) => (
                 <BookCard
                   {...this.props}
@@ -123,7 +123,7 @@ const mapDispatchToProps = (dispatch) => {
   // Action
   return {
     // Books
-    setBook: (request) => dispatch(book(request)),
+    setBook: (request) => dispatch(detail_genre(request)),
   };
 };
 

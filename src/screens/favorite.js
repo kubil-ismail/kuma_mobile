@@ -47,14 +47,13 @@ export class Favorite extends Component {
     })
     .then((res) => {
       const { data } = res;
-      this.setState({
+      this.props.setFavorite({
         data: data.data,
         options: data.options,
-        isLoading: false,
-        isError: false,
       });
+      this.setState({ isLoading: false, isError: false });
     })
-    .catch(() => this.setState({isError: true}));
+    .catch(() => this.setState({ isError: true, isLoading: false }));
   };
 
   nextPage = () => {
@@ -69,14 +68,13 @@ export class Favorite extends Component {
       })
       .then((res) => {
         const { data } = res;
-        this.setState({
+        this.props.setFavorite({
           data: data.data,
           options: data.options,
-          isLoading: false,
-          isError: false,
         });
+        this.setState({ isLoading: false, isError: false });
       })
-      .catch(() => this.setState({ isError: true }));
+      .catch(() => this.setState({ isError: true, isLoading: false  }));
     }
   }
 
@@ -121,7 +119,8 @@ export class Favorite extends Component {
   }
 
   render() {
-    const { data, isLoading, isError } = this.state;
+    const { data } = this.props.favorites;
+    const { isLoading, isError } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <Loader isLoading={isLoading} />
@@ -184,6 +183,7 @@ const mapStateToProps = (state) => {
   // Redux Store --> Component
   return {
     auth: state.authReducer,
+    favorites: state.favoriteReducer,
   };
 };
 

@@ -5,6 +5,8 @@ const initialState = {
   data: [],
   options: [],
   detail: [],
+  reviews: [],
+  detail_genre: [],
   isLoading: true,
   isError: false,
   errMsg: null,
@@ -31,6 +33,26 @@ const bookReducer = (state = initialState, action) => {
         ...state,
         // Redux Store
         detail: data,
+      };
+    }
+    // SET BOOKS
+    case 'DETAIL_GENRE': {
+      const { data } = action.payload;
+      return {
+        // State
+        ...state,
+        // Redux Store
+        detail_genre: data,
+      };
+    }
+    // SET REVIEWS
+    case 'REVIEWS': {
+      const { data } = action.payload;
+      return {
+        // State
+        ...state,
+        // Redux Store
+        reviews: data,
       };
     }
     // Default

@@ -2,7 +2,7 @@
 
 // SET FAVORITE
 export const favorite = (request) => ({
-  type: 'SET',
+  type: 'FAVORITE',
   payload: {
     data: request.data,
     options: request.options,

@@ -2,7 +2,7 @@
 
 // SET GENRE
 export const genre = (request) => ({
-  type: 'SET',
+  type: 'GENRE',
   payload: {
     data: request.data,
     options: request.options,

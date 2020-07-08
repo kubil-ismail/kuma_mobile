@@ -16,7 +16,7 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { detail } from '../redux/actions/bookActions';
+import { detail, reviews } from '../redux/actions/bookActions';
 
 // Import component
 import Error from '../components/error';
@@ -29,7 +29,7 @@ export class Detail extends Component {
     super(props);
     this.state = {
       data: [],
-      reviews: [],
+      _reviews: [],
       options: [],
       isLoading: true,
       isError: false,
@@ -54,7 +54,7 @@ export class Detail extends Component {
         isLoading: false,
         data: this.props.details,
        });
-    }).catch(() => this.setState({ isError: true }));
+    }).catch(() => this.setState({ isError: true, isLoading: false }));
   };
 
   fetchReview = () => {
@@ -62,11 +62,12 @@ export class Detail extends Component {
     axios.get(`${url}review?book_id=${parseInt(bookId, 10)}&limit=5`)
     .then((res) => {
       const { data } = res;
+      this.props.setReviews({ data: data.data });
       this.setState({
-        reviews: data.data,
         isLoading: false,
+        _reviews: this.props.reviewBook,
       });
-    }).catch(() => this.setState({ isError: true }));
+    }).catch(() => this.setState({ isError: true, isLoading: false }));
   };
 
   addFavorite = () => {
@@ -113,7 +114,7 @@ export class Detail extends Component {
   }
 
   render() {
-    const { isError, isLoading, data, reviews } = this.state;
+    const { isError, isLoading, data, _reviews } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <Loader isLoading={isLoading} />
@@ -157,7 +158,7 @@ export class Detail extends Component {
             </View>
             {/* Review */}
             <Text h4 style={styles.desc}>Review</Text>
-            {reviews.length >= 1 && reviews.map((val) => (
+            {_reviews.length >= 1 && _reviews.map((val) => (
               <Card
                 key={val.id}
                 title={val.fullname}
@@ -257,6 +258,7 @@ const mapStateToProps = (state) => {
   return {
     auth: state.authReducer,
     details: state.bookReducer.detail,
+    reviewBook: state.bookReducer.reviews,
   };
 };
 
@@ -265,7 +267,9 @@ const mapDispatchToProps = (dispatch) => {
   // Action
   return {
     // Detail
-    setDetail: (trueFalse) => dispatch(detail(trueFalse)),
+    setDetail: (request) => dispatch(detail(request)),
+    // Revies
+    setReviews: (request) => dispatch(reviews(request)),
   };
 };
 

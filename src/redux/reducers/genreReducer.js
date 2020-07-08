@@ -2,7 +2,7 @@
 
 // Initial State
 const initialState = {
-  genres: [],
+  data: [],
   options: [],
   isLoading: true,
   isError: false,
@@ -12,14 +12,14 @@ const initialState = {
 // Reducers (Modifies The State And Returns A New State)
 const genreReducer = (state = initialState, action) => {
   switch (action.type) {
-    // SET BOOKS
-    case 'SET': {
+    // SET GENRES
+    case 'GENRE': {
       const { data, options } = action.payload;
       return {
         // State
         ...state,
         // Redux Store
-        genres: data, options,
+        data, options,
       };
     }
     // Default
