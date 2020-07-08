@@ -3,15 +3,16 @@ import React from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import {Image, Text} from 'react-native-elements';
 
-export default function error() {
+export default function error(props) {
   return (
     <View style={styles.center}>
       <Image
         source={require('../assets/image/undraw_Taken_if77.png')}
         style={styles.svg}
         PlaceholderContent={<ActivityIndicator />}
+        resizeMode="contain"
       />
-      <Text>Can't get data from server</Text>
+      <Text>{props.msg || "Can't get data from server"}</Text>
     </View>
   );
 }

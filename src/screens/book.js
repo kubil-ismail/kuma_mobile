@@ -21,6 +21,7 @@ import { SET_GENRE } from '../redux/actions/genreActions';
 
 // import component
 import BookCard from '../components/book';
+import GenreButton from '../components/genre';
 import Header from '../components/header';
 import Error from '../components/error';
 import Loader from '../components/loader';
@@ -73,13 +74,6 @@ export class Book extends Component {
     });
   }
 
-  viewGenre = (id, name) => {
-    this.props.navigation.navigate('Genre',{
-      genreId: id,
-      genreName: name,
-    });
-  }
-
   componentDidMount = () => {
     this.fetchBook();
     this.fetchGenre();
@@ -124,15 +118,11 @@ export class Book extends Component {
                 horizontal
                 data={genre_data}
                 renderItem={({ item }) => (
-                  <TouchableOpacity
-                    onPress={() => this.viewGenre(item.id, item.name)}
-                  >
-                    <Badge
-                      value={item.name}
-                      badgeStyle={{ padding: 15 }}
-                      containerStyle={{ padding: 5 }}
-                    />
-                  </TouchableOpacity>
+                  <GenreButton
+                    {...this.props}
+                    id={item.id}
+                    name={item.name}
+                  />
                 )}
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={item => item.id.toString()}
