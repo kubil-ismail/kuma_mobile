@@ -24,6 +24,7 @@ export class Search extends Component {
     super(props);
     this.state = {
       _search: '',
+      onSearch: false,
     };
   }
 
@@ -34,6 +35,7 @@ export class Search extends Component {
   search = () => {
     const { _search } = this.state;
     this.props._SET_SEARCH({ search: _search });
+    this.setState({ onSearch: true });
   }
 
   nextPage = () => {
@@ -88,7 +90,7 @@ export class Search extends Component {
 
   render() {
     const { search_book, search_loading, search_err } = this.props.books;
-    const { _search } = this.state;
+    const { _search, onSearch } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <SearchBar
@@ -101,7 +103,7 @@ export class Search extends Component {
           onSubmitEditing={this.search}
         />
         <Loader isLoading={search_loading} />
-        {search_err && (
+        {onSearch && search_book.length === undefined && (
           <View style={styles.center}>
             <Text>Book Not Found</Text>
           </View>
