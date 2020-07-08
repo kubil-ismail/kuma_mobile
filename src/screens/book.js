@@ -24,10 +24,6 @@ import Loader from '../components/loader';
 export class Book extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isLoading: true,
-      isError: false,
-    };
     const { loggedIn, apikey, userId } = this.props.auth;
     if (!loggedIn && !apikey && !userId) {
       this.props.navigation.navigate('welcome');
@@ -41,13 +37,6 @@ export class Book extends Component {
   fetchGenre = () => {
     this.props._SET_GENRE();
   };
-
-  onError = () => {
-    this.setState({
-      isError: true,
-      isLoading: false,
-    });
-  }
 
   componentDidMount = () => {
     this.fetchBook();
