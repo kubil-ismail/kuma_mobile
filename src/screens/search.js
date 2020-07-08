@@ -24,9 +24,6 @@ export class Search extends Component {
     super(props);
     this.state = {
       _search: '',
-      isLoading: false,
-      onSearch: true,
-      isError: false,
     };
   }
 
@@ -65,17 +62,6 @@ export class Search extends Component {
       this.search();
     }
   };
-
-  onComplete = () => {
-    this.setState({
-      isLoading: false,
-      isError: false,
-    });
-  }
-
-  onError = () => {
-    this.setState({ isError: true, isLoading: false });
-  }
 
   showAlert = () => {
     Alert.alert(
