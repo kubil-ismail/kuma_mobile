@@ -59,7 +59,6 @@ export class Favorite extends Component {
   nextPage = () => {
     const { favorite_option } = this.props.favorites;
     if (favorite_option.next) {
-      this.setState({ isLoading: true });
       const { apikey, userId } = this.props.auth;
       axios.get(`${url}profile/favorite/${userId}?${favorite_option.next}`,{
         headers: {
@@ -73,7 +72,6 @@ export class Favorite extends Component {
           data: [...favorite_data, ...data.data],
           options: data.options,
         });
-        this.onComplete();
       })
       .catch((err) => console.log(err));
     }

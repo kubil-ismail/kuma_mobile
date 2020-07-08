@@ -55,7 +55,6 @@ export class Search extends Component {
   nextPage = () => {
     const { search_option } = this.props.books;
     if (search_option.next) {
-      this.setState({ isLoading: true });
       axios.get(`${url}book?${search_option.next}`)
       .then((res) => {
         const { data } = res;
@@ -64,7 +63,6 @@ export class Search extends Component {
           data: [...search_book, ...data.data],
           options: data.options,
         });
-        this.onComplete();
       })
       .catch(() => this.onError());
     }

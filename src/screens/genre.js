@@ -55,18 +55,16 @@ export class Genre extends Component {
   };
 
   nextPage = () => {
-    const { genre_book_options } = this.props.books;
+    const { genre_book_options, genre_book_data } = this.props.books;
     if (genre_book_options.next) {
-      this.setState({ isLoading: true });
       const { genreId } = this.props.route.params;
       axios.get(`${url}book/genre/${genreId}?${genre_book_options.next}`)
       .then((res) => {
         const { data } = res;
         this.props._SET_DETAIL_GENRE({
-          data: data.data,
+          data: [...genre_book_data, ...data.data],
           options: data.options,
         });
-        this.setState({ isLoading: false });
       })
       .catch(() => this.onError());
     }
