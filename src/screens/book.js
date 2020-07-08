@@ -20,6 +20,7 @@ import BookCard from '../components/book';
 import GenreButton from '../components/genre';
 import Header from '../components/header';
 import Loader from '../components/loader';
+import Error from '../components/error';
 
 export class Book extends Component {
   constructor(props) {
@@ -50,9 +51,10 @@ export class Book extends Component {
       <SafeAreaView style={styles.container}>
         <Loader isLoading={book_loading || genre_loading} />
         <Header />
-        {/* {isError && (
+        {/* Error Page */}
+        {genre_err && book_err && (
           <Error />
-        )} */}
+        )}
         <ScrollView style={styles.body}>
           {/* Popular Books */}
           {!book_loading && !book_err && (
