@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
 import {
   Dimensions,
@@ -8,9 +7,8 @@ import {
   StyleSheet,
   ScrollView,
   View,
-  TouchableOpacity,
 } from 'react-native';
-import { Badge, Text } from 'react-native-elements';
+import { Text } from 'react-native-elements';
 import axios from 'axios';
 // import Icon from 'react-native-vector-icons/FontAwesome5';
 
