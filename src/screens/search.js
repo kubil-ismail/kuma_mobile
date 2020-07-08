@@ -10,7 +10,12 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+
 import axios from 'axios';
+
+// Imports: Redux Actions
+import { connect } from 'react-redux';
+import { SET_SEARCH } from '../redux/actions/bookActions';
 
 // import component
 import BookCard from '../components/book';
@@ -18,68 +23,64 @@ import Loader from '../components/loader';
 
 const url = 'http://192.168.1.4:8000/';
 
-export default class Search extends Component {
+export class Search extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      search: '',
-      data: [],
-      options: [],
+      _search: '',
       isLoading: false,
       onSearch: true,
       isError: false,
     };
   }
 
-  updateSearch = (search) => {
-    this.setState({ search });
+  updateSearch = (_search) => {
+    this.setState({ _search });
   };
 
   search = () => {
-    const { search } = this.state;
+    const { _search } = this.state;
     this.setState({ isLoading: true });
-    axios.get(`${url}book?search=${search}&limit=10`)
+    axios.get(`${url}book?search=${_search}&limit=5`)
     .then((res) => {
       const { data } = res;
-      this.setState({
+      this.props._SET_SEARCH({
         data: data.data,
         options: data.options,
-        isLoading: false,
-        isError: false,
       });
-    }).catch(() => this.setState({ isError: true }));
+      this.onComplete();
+    }).catch(() => this.onError());
   }
 
   nextPage = () => {
-    const { options } = this.state;
-    if (options.next) {
+    const { search_option } = this.props.books;
+    if (search_option.next) {
       this.setState({ isLoading: true });
-      axios.get(`${url}book?${options.next}`)
-        .then((res) => {
-          const { data } = res;
-          this.setState({
-            data: data.data,
-            options: data.options,
-            isLoading: false,
-          });
-        })
-        .catch(() => this.setState({ isError: true }));
+      axios.get(`${url}book?${search_option.next}`)
+      .then((res) => {
+        const { data } = res;
+        this.props._SET_SEARCH({
+          data: data.data,
+          options: data.options,
+        });
+        this.onComplete();
+      })
+      .catch(() => this.onError());
     }
   }
 
   descSort = () => {
-    const { search } = this.state;
+    const { _search } = this.state;
     this.setState({ isLoading: true });
-    axios.get(`${url}book?search=${search}&limit=10&sort=1`)
-      .then((res) => {
-        const { data } = res;
-        this.setState({
-          data: data.data,
-          options: data.options,
-          isLoading: false,
-          isError: false,
-        });
-      }).catch(() => this.setState({ isError: true }));
+    axios.get(`${url}book?search=${_search}&limit=5&sort=1`)
+    .then((res) => {
+      const { data } = res;
+      this.props._SET_SEARCH({
+        data: data.data,
+        options: data.options,
+      });
+      this.onComplete();
+    }).catch(() => this.onError() );
   }
 
   onSort = (sort) => {
@@ -91,6 +92,17 @@ export default class Search extends Component {
       this.search();
     }
   };
+
+  onComplete = () => {
+    this.setState({
+      isLoading: false,
+      isError: false,
+    });
+  }
+
+  onError = () => {
+    this.setState({ isError: true, isLoading: false });
+  }
 
   showAlert = () => {
     Alert.alert(
@@ -116,7 +128,8 @@ export default class Search extends Component {
   }
 
   render() {
-    const { data, search, isError, isLoading } = this.state;
+    const { search_book } = this.props.books;
+    const { _search, isError, isLoading } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <SearchBar
@@ -125,7 +138,7 @@ export default class Search extends Component {
           containerStyle={{backgroundColor: '#fff', paddingTop: 25}}
           placeholder="Type Here..."
           onChangeText={this.updateSearch}
-          value={search}
+          value={_search}
           onSubmitEditing={this.search}
         />
         <Loader isLoading={isLoading} />
@@ -134,7 +147,7 @@ export default class Search extends Component {
             <Text>Book Not Found</Text>
           </View>
         )}
-        {!isError && search.length === 0 && data.length === 0 && (
+        {!isError && _search.length === 0 && search_book.length === 0 && (
           <View style={styles.center}>
             <Image
               source={require('../assets/image/undraw_typewriter_i8xd.png')}
@@ -143,7 +156,7 @@ export default class Search extends Component {
             />
           </View>
         )}
-        {!isError && data.length >= 1 && (
+        {!isError && search_book.length >= 1 && (
           <>
             <View style={styles.head}>
               <Text h4 style={styles.title}>Search Result</Text>
@@ -155,7 +168,7 @@ export default class Search extends Component {
             </View>
             <View style={styles.body}>
               <FlatList
-                data={data}
+                data={search_book}
                 renderItem={({ item }) => (
                   <BookCard
                     {...this.props}
@@ -212,3 +225,24 @@ const styles = StyleSheet.create({
     color: '#183153',
   },
 });
+
+// Map State To Props (Redux Store Passes State To Component)
+const mapStateToProps = (state) => {
+  // Redux Store --> Component
+  return {
+    auth: state.authReducer,
+    books: state.bookReducer,
+  };
+};
+
+// Map Dispatch To Props (Dispatch Actions To Reducers. Reducers Then Modify The Data And Assign It To Your Props)
+const mapDispatchToProps = (dispatch) => {
+  // Action
+  return {
+    // SET_SEARCH
+    _SET_SEARCH: (request) => dispatch(SET_SEARCH(request)),
+  };
+};
+
+// Exports
+export default connect(mapStateToProps, mapDispatchToProps)(Search);

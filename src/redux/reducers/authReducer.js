@@ -25,6 +25,17 @@ const authReducer = (state = initialState, action) => {
         ...{ email: action.payload },
       };
     }
+    // Login
+    case 'LOGOUT': {
+      return {
+        ...state,
+        ...{
+          loggedIn: false,
+          apikey: false,
+          userId: false,
+        },
+      };
+    }
     // Default
     default: {
       return state;

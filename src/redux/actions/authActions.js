@@ -15,3 +15,6 @@ export const signup = (request) => ({
   type: 'SIGN_UP',
   payload: request,
 });
+
+// Logout
+export const logout = () => ({ type: 'LOGOUT' });

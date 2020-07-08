@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 
-// UPDATE PROFILE
-export const profile = (request) => ({
-  type: 'PATCH',
+// SET PROFILE
+export const SET_PROFILE = (request) => ({
+  type: 'SET_PROFILE',
   payload: {
     name: request.name,
     email: request.email,

@@ -16,7 +16,7 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { detail, reviews } from '../redux/actions/bookActions';
+import { SET_DETAIL, SET_REVIEW } from '../redux/actions/bookActions';
 
 // Import component
 import Error from '../components/error';
@@ -28,9 +28,6 @@ export class Detail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
-      _reviews: [],
-      options: [],
       isLoading: true,
       isError: false,
       InputReview: null,
@@ -47,14 +44,11 @@ export class Detail extends Component {
     axios.get(`${url}book/${bookId}`)
     .then((res) => {
       const { data } = res;
-      this.props.setDetail({
+      this.props._SET_DETAIL({
         data: data.data[0],
       });
-      this.setState({
-        isLoading: false,
-        data: this.props.details,
-       });
-    }).catch(() => this.setState({ isError: true, isLoading: false }));
+      this.setState({ isLoading: false });
+    }).catch(() => this.onError());
   };
 
   fetchReview = () => {
@@ -62,12 +56,9 @@ export class Detail extends Component {
     axios.get(`${url}review?book_id=${parseInt(bookId, 10)}&limit=5`)
     .then((res) => {
       const { data } = res;
-      this.props.setReviews({ data: data.data });
-      this.setState({
-        isLoading: false,
-        _reviews: this.props.reviewBook,
-      });
-    }).catch(() => this.setState({ isError: true, isLoading: false }));
+      this.props._SET_REVIEW({ data: data.data });
+      this.setState({ isLoading: false });
+    }).catch(() => this.onError());
   };
 
   addFavorite = () => {
@@ -108,13 +99,21 @@ export class Detail extends Component {
     .catch(() => ToastAndroid.show('Something wrong. Try again', ToastAndroid.SHORT));
   }
 
+  onError = () => {
+    this.setState({
+      isError: true,
+      isLoading: false,
+    });
+  }
+
   componentDidMount = () => {
     this.fetchBook();
     this.fetchReview();
   }
 
   render() {
-    const { isError, isLoading, data, _reviews } = this.state;
+    const book_detail = this.props.detail, book_review = this.props.review;
+    const { isError, isLoading } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <Loader isLoading={isLoading} />
@@ -125,7 +124,7 @@ export class Detail extends Component {
         {!isError && !isLoading && (
           <ScrollView>
             <Image
-              source={{ uri: `${url}${data.cover}` }}
+              source={{ uri: `${url}${book_detail.cover}` }}
               style={styles.bg}
               resizeMode={'cover'}
               PlaceholderContent={<ActivityIndicator />}
@@ -133,32 +132,32 @@ export class Detail extends Component {
 
             <View style={styles.body}>
               <Image
-                source={{ uri: `${url}${data.cover}` }}
+                source={{ uri: `${url}${book_detail.cover}` }}
                 style={styles.cover}
                 resizeMode="center"
                 PlaceholderContent={<ActivityIndicator />}
               />
               {/* eslint-disable-next-line react-native/no-inline-styles */}
-              <Text h3 style={{ textAlign: 'center' }}>{data.name}</Text>
+              <Text h3 style={{ textAlign: 'center' }}>{book_detail.name}</Text>
               {/* eslint-disable-next-line react-native/no-inline-styles */}
-              <Text style={{ marginVertical: 10 }}>{data.author}</Text>
+              <Text style={{ marginVertical: 10 }}>{book_detail.author}</Text>
               <ButtonGroup
                 // eslint-disable-next-line react-native/no-inline-styles
                 buttonContainerStyle={{ backgroundColor: '#e5f9fd' }}
                 buttons={[
-                  data.genre,
-                  data.status,
-                  data.language,
+                  book_detail.genre,
+                  book_detail.status,
+                  book_detail.language,
                 ]}
               />
               {/* About This Book */}
               <Text h4 style={styles.desc}>About</Text>
-              <Text style={styles.desc}>{data.description}</Text>
+              <Text style={styles.desc}>{book_detail.description}</Text>
 
             </View>
             {/* Review */}
             <Text h4 style={styles.desc}>Review</Text>
-            {_reviews.length >= 1 && _reviews.map((val) => (
+            {book_review.length >= 1 && book_review.map((val) => (
               <Card
                 key={val.id}
                 title={val.fullname}
@@ -257,8 +256,8 @@ const mapStateToProps = (state) => {
   // Redux Store --> Component
   return {
     auth: state.authReducer,
-    details: state.bookReducer.detail,
-    reviewBook: state.bookReducer.reviews,
+    detail: state.bookReducer.book_detail,
+    review: state.bookReducer.book_review,
   };
 };
 
@@ -267,9 +266,9 @@ const mapDispatchToProps = (dispatch) => {
   // Action
   return {
     // Detail
-    setDetail: (request) => dispatch(detail(request)),
+    _SET_DETAIL: (request) => dispatch(SET_DETAIL(request)),
     // Revies
-    setReviews: (request) => dispatch(reviews(request)),
+    _SET_REVIEW: (request) => dispatch(SET_REVIEW(request)),
   };
 };
 

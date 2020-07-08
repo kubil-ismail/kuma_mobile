@@ -16,8 +16,8 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { book } from '../redux/actions/bookActions';
-import { genre } from '../redux/actions/genreActions';
+import { SET_BOOK } from '../redux/actions/bookActions';
+import { SET_GENRE } from '../redux/actions/genreActions';
 
 // import component
 import BookCard from '../components/book';
@@ -31,12 +31,7 @@ export class Book extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      search: '',
-      data: [],
-      options: [],
-      genre: [],
       isLoading: true,
-      onSearch: true,
       isError: false,
     };
     const { loggedIn, apikey, userId } = this.props.auth;
@@ -49,27 +44,34 @@ export class Book extends Component {
     axios.get(`${url}book?limit=10&page=${page}`)
     .then((res) => {
       const { data } = res;
-      this.props.setBooks({
+      this.props._SET_BOOK({
         data: data.data,
         options: data.options,
       });
       this.setState({ isLoading: false });
     })
-    .catch(() => this.setState({ isError: true, isLoading: false }));
+    .catch(() => this.onError());
   };
 
   fetchGenre = () => {
     axios.get(`${url}genre`)
     .then((res) => {
       const { data } = res;
-      this.props.setGenres({
+      this.props._SET_GENRE({
         data: data.data,
         options: data.options,
       });
       this.setState({ isLoading: false });
     })
-    .catch(() => this.setState({ isError: true, isLoading: false }));
+    .catch(() => this.onError() );
   };
+
+  onError = () => {
+    this.setState({
+      isError: true,
+      isLoading: false,
+    });
+  }
 
   viewGenre = (id, name) => {
     this.props.navigation.navigate('Genre',{
@@ -85,6 +87,8 @@ export class Book extends Component {
 
   render() {
     const { isError, isLoading } = this.state;
+    const { genre_data } = this.props.genres;
+    const { book_data } = this.props.books;
     return (
       <SafeAreaView style={styles.container}>
         <Loader isLoading={isLoading} />
@@ -99,7 +103,7 @@ export class Book extends Component {
               <Text h3 style={styles.title}>Popular Book</Text>
               <FlatList
                 horizontal
-                data={this.props.books.data}
+                data={book_data}
                 renderItem={({ item }) => (
                   <BookCard
                     {...this.props}
@@ -118,7 +122,7 @@ export class Book extends Component {
               <Text h3 style={styles.title}>Genre Book</Text>
               <FlatList
                 horizontal
-                data={this.props.genres.data}
+                data={genre_data}
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     onPress={() => this.viewGenre(item.id, item.name)}
@@ -180,10 +184,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
-    // Books
-    setBooks: (request) => dispatch(book(request)),
-    // Genres
-    setGenres: (request) => dispatch(genre(request)),
+    // SET_BOOK
+    _SET_BOOK: (request) => dispatch(SET_BOOK(request)),
+    // SET_GENRE
+    _SET_GENRE: (request) => dispatch(SET_GENRE(request)),
   };
 };
 

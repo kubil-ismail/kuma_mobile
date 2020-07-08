@@ -1,34 +1,44 @@
 /* eslint-disable prettier/prettier */
 
-// SET Book
-export const book = (request) => ({
-  type: 'SET',
+// SET_BOOK
+export const SET_BOOK = (request) => ({
+  type: 'SET_BOOK',
   payload: {
     data: request.data,
     options: request.options,
   },
 });
 
-// SET detail Book
-export const detail = (request) => ({
-  type: 'DETAIL',
+// SET_DETAIL
+export const SET_DETAIL = (request) => ({
+  type: 'SET_DETAIL',
   payload: {
     data: request.data,
   },
 });
 
 // SET genre Book
-export const detail_genre = (request) => ({
-  type: 'DETAIL_GENRE',
+export const SET_DETAIL_GENRE = (request) => ({
+  type: 'SET_DETAIL_GENRE',
+  payload: {
+    data: request.data,
+    options: request.options,
+  },
+});
+
+// SET_REVIEW
+export const SET_REVIEW = (request) => ({
+  type: 'SET_REVIEW',
   payload: {
     data: request.data,
   },
 });
 
-// SET reviews Book
-export const reviews = (request) => ({
-  type: 'REVIEWS',
+// SET_SEARCH
+export const SET_SEARCH = (request) => ({
+  type: 'SET_SEARCH',
   payload: {
     data: request.data,
+    options: request.options,
   },
 });

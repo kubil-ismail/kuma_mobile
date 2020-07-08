@@ -2,11 +2,14 @@
 
 // Initial State
 const initialState = {
-  data: [],
-  options: [],
-  detail: [],
-  reviews: [],
-  detail_genre: [],
+  book_data: [],
+  book_option: [],
+  book_detail: [],
+  book_review: [],
+  search_book: [],
+  search_option: [],
+  genre_book_data: [],
+  genre_book_options: [],
   isLoading: true,
   isError: false,
   errMsg: null,
@@ -16,43 +19,55 @@ const initialState = {
 const bookReducer = (state = initialState, action) => {
   switch (action.type) {
     // SET BOOKS
-    case 'SET': {
+    case 'SET_BOOK': {
       const { data, options } = action.payload;
       return {
         // State
         ...state,
         // Redux Store
-        data, options,
+        book_data: data,
+        book_option: options,
       };
     }
-    // SET BOOKS
-    case 'DETAIL': {
+    // SET DETAIL
+    case 'SET_DETAIL': {
       const { data } = action.payload;
       return {
         // State
         ...state,
         // Redux Store
-        detail: data,
+        book_detail: data,
       };
     }
-    // SET BOOKS
-    case 'DETAIL_GENRE': {
-      const { data } = action.payload;
+    // DETAIL_GENRE
+    case 'SET_DETAIL_GENRE': {
+      const { data, options } = action.payload;
       return {
         // State
         ...state,
         // Redux Store
-        detail_genre: data,
+        genre_book_data: data,
+        genre_book_options: options,
       };
     }
     // SET REVIEWS
-    case 'REVIEWS': {
+    case 'SET_REVIEW': {
       const { data } = action.payload;
       return {
         // State
         ...state,
         // Redux Store
-        reviews: data,
+        book_review: data,
+      };
+    }
+    // SET SEARCH
+    case 'SET_SEARCH': {
+      const { data, options } = action.payload;
+      return {
+        // State
+        ...state,
+        // Redux Store
+        search_book: data, search_option: options,
       };
     }
     // Default
