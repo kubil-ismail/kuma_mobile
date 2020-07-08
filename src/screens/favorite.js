@@ -68,13 +68,14 @@ export class Favorite extends Component {
       })
       .then((res) => {
         const { data } = res;
+        const { favorite_data } = this.props.favorites;
         this.props._SET_FAVORITE({
-          data: data.data,
+          data: [...favorite_data, ...data.data],
           options: data.options,
         });
         this.onComplete();
       })
-        .catch(() => this.onError());
+      .catch((err) => console.log(err));
     }
   }
 
@@ -140,11 +141,12 @@ export class Favorite extends Component {
         {!isError && (
           <FlatList
             data={favorite_data}
-            renderItem={({ item }) => (
+            renderItem={({item}) => (
+              // console.log('new', item.created_at.slice(0,10))
               <ListItem
                 key={item.id}
                 title={item.name}
-                subtitle={item.created_at.slice(0,10)}
+                // subtitle={item.created_at.slice(0,10)}
                 leftIcon={{ name: 'book' }}
                 onPress={() => this.props.navigation.navigate('Detail',{
                   bookId: item.id,

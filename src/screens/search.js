@@ -41,7 +41,7 @@ export class Search extends Component {
   search = () => {
     const { _search } = this.state;
     this.setState({ isLoading: true });
-    axios.get(`${url}book?search=${_search}&limit=5`)
+    axios.get(`${url}book?search=${_search}&limit=10`)
     .then((res) => {
       const { data } = res;
       this.props._SET_SEARCH({
@@ -59,8 +59,9 @@ export class Search extends Component {
       axios.get(`${url}book?${search_option.next}`)
       .then((res) => {
         const { data } = res;
+        const { search_book } = this.props.books;
         this.props._SET_SEARCH({
-          data: data.data,
+          data: [...search_book, ...data.data],
           options: data.options,
         });
         this.onComplete();
