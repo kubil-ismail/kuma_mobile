@@ -177,11 +177,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: deviceHeight,
   },
-  svg: {
-    width: 250,
-    height: 200,
-    marginVertical: 30,
-  },
   full: {
     flex: 1,
     padding: 10,
