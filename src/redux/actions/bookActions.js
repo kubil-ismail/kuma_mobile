@@ -35,8 +35,14 @@ export const SET_REVIEW = (request) => ({
 // SET_SEARCH
 export const SET_SEARCH = (request) => ({
   type: 'SET_SEARCH',
-  payload: {
-    data: request.data,
-    options: request.options,
-  },
+  payload: get({
+    url: `book?search=${request.search}&limit=10${request.options || ''}`,
+  }),
+});
+
+export const SET_SEARCH_NEXT = (request) => ({
+  type: 'SET_SEARCH_NEXT',
+  payload: get({
+    url: `book?${request.search}`,
+  }),
 });

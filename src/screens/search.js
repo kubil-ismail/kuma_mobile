@@ -11,17 +11,13 @@ import {
   View,
 } from 'react-native';
 
-import axios from 'axios';
-
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { SET_SEARCH } from '../redux/actions/bookActions';
+import { SET_SEARCH, SET_SEARCH_NEXT } from '../redux/actions/bookActions';
 
 // import component
 import BookCard from '../components/book';
 import Loader from '../components/loader';
-
-const url = 'http://192.168.1.4:8000/';
 
 export class Search extends Component {
   constructor(props) {
@@ -40,46 +36,24 @@ export class Search extends Component {
 
   search = () => {
     const { _search } = this.state;
-    this.setState({ isLoading: true });
-    axios.get(`${url}book?search=${_search}&limit=10`)
-    .then((res) => {
-      const { data } = res;
-      this.props._SET_SEARCH({
-        data: data.data,
-        options: data.options,
-      });
-      this.onComplete();
-    }).catch(() => this.onError());
+    this.props._SET_SEARCH({ search: _search });
   }
 
   nextPage = () => {
     const { search_option } = this.props.books;
     if (search_option.next) {
-      axios.get(`${url}book?${search_option.next}`)
-      .then((res) => {
-        const { data } = res;
-        const { search_book } = this.props.books;
-        this.props._SET_SEARCH({
-          data: [...search_book, ...data.data],
-          options: data.options,
-        });
-      })
-      .catch(() => this.onError());
+      this.props._SET_SEARCH_NEXT({
+        search: search_option.next,
+      });
     }
   }
 
   descSort = () => {
     const { _search } = this.state;
-    this.setState({ isLoading: true });
-    axios.get(`${url}book?search=${_search}&limit=5&sort=1`)
-    .then((res) => {
-      const { data } = res;
-      this.props._SET_SEARCH({
-        data: data.data,
-        options: data.options,
-      });
-      this.onComplete();
-    }).catch(() => this.onError() );
+    this.props._SET_SEARCH({
+      search: _search,
+      options: '&sort=1',
+    });
   }
 
   onSort = (sort) => {
@@ -127,8 +101,8 @@ export class Search extends Component {
   }
 
   render() {
-    const { search_book } = this.props.books;
-    const { _search, isError, isLoading } = this.state;
+    const { search_book, search_loading, search_err } = this.props.books;
+    const { _search } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <SearchBar
@@ -140,13 +114,13 @@ export class Search extends Component {
           value={_search}
           onSubmitEditing={this.search}
         />
-        <Loader isLoading={isLoading} />
-        {isError && (
+        <Loader isLoading={search_loading} />
+        {search_err && (
           <View style={styles.center}>
             <Text>Book Not Found</Text>
           </View>
         )}
-        {!isError && _search.length === 0 && search_book.length === 0 && (
+        {!search_err && _search.length === 0 && search_book.length === 0 && (
           <View style={styles.center}>
             <Image
               source={require('../assets/image/undraw_typewriter_i8xd.png')}
@@ -155,7 +129,7 @@ export class Search extends Component {
             />
           </View>
         )}
-        {!isError && search_book.length >= 1 && (
+        {!search_err && search_book.length >= 1 && (
           <>
             <View style={styles.head}>
               <Text h4 style={styles.title}>Search Result</Text>
@@ -179,7 +153,7 @@ export class Search extends Component {
                 )}
                 keyExtractor={item => item.id.toString()}
                 onRefresh={() => this.search()}
-                refreshing={isLoading}
+                refreshing={search_loading}
                 onEndReached={this.nextPage}
                 onEndReachedThreshold={0.5}
               />
@@ -240,6 +214,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     // SET_SEARCH
     _SET_SEARCH: (request) => dispatch(SET_SEARCH(request)),
+    _SET_SEARCH_NEXT: (request) => dispatch(SET_SEARCH_NEXT(request)),
   };
 };
 

@@ -10,9 +10,12 @@ const initialState = {
   search_option: [],
   genre_book_data: [],
   genre_book_options: [],
-  book_loading: true,
+  book_loading: false,
   book_err: false,
   book_msg: null,
+  search_loading: false,
+  search_err: false,
+  search_msg: null,
 };
 
 // Reducers (Modifies The State And Returns A New State)
@@ -34,7 +37,7 @@ const bookReducer = (state = initialState, action) => {
         // Redux Store
         book_loading: false,
         book_err: true,
-        book_msg: "Can't get data from server",
+        book_msg: "Can't get book from server",
       };
     }
     case 'SET_BOOK_FULFILLED': {
@@ -80,13 +83,47 @@ const bookReducer = (state = initialState, action) => {
       };
     }
     // SET SEARCH
-    case 'SET_SEARCH': {
-      const { data, options } = action.payload;
+    case 'SET_SEARCH_PENDING': {
       return {
         // State
         ...state,
         // Redux Store
-        search_book: data, search_option: options,
+        search_loading: true,
+      };
+    }
+    case 'SET_SEARCH_REJECTED': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        search_loading: false,
+        search_err: true,
+        search_msg: 'Book not found',
+      };
+    }
+    case 'SET_SEARCH_FULFILLED': {
+      const { data, options } = action.payload.data;
+      return {
+        // State
+        ...state,
+        // Redux Store
+        search_loading: false,
+        search_err: false,
+        search_book: data,
+        search_option: options,
+      };
+    }
+    // SET SEARCH NEXT
+    case 'SET_SEARCH_NEXT_FULFILLED': {
+      const { data, options } = action.payload.data;
+      return {
+        // State
+        ...state,
+        // Redux Store
+        search_loading: false,
+        search_err: false,
+        search_book: [...state.search_book, ...data],
+        search_option: options,
       };
     }
     // Default
