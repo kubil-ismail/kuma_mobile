@@ -4,7 +4,9 @@ import {get} from '../../helper/http';
 // SET_BOOK
 export const SET_BOOK = (request) => ({
   type: 'SET_BOOK',
-  payload: get({ url: `book?limit=10&page=${request.page}` }),
+  payload: get({
+    url: `book?limit=10&page=${request.page}`,
+  }),
 });
 
 // SET_DETAIL

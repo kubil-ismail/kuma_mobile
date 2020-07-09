@@ -13,7 +13,7 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { SET_FAVORITE } from '../redux/actions/favoriteActions';
+import { SET_FAVORITE, SET_FAVORITE_NEXT } from '../redux/actions/favoriteActions';
 
 // Import component
 import Header from '../components/header';
@@ -25,13 +25,6 @@ const url = 'http://192.168.1.4:8000/';
 export class Favorite extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      data: [],
-      options: [],
-      userId: 30,
-      isLoading: true,
-      isError: false,
-    };
     const { loggedIn, apikey, userId } = this.props.auth;
     if (!loggedIn && !apikey && !userId) {
       this.props.navigation.navigate('welcome');
@@ -40,40 +33,30 @@ export class Favorite extends Component {
 
   fetchFavorite = () => {
     const { apikey, userId } = this.props.auth;
-    axios.get(`${url}profile/favorite/${userId}?limit=15`,{
+    const config = {
       headers: {
         Authorization: apikey,
       },
-    })
-    .then((res) => {
-      const { data } = res;
-      this.props._SET_FAVORITE({
-        data: data.data,
-        options: data.options,
-      });
-      this.onComplete();
-    })
-    .catch(() => this.onError());
+    };
+    this.props._SET_FAVORITE({
+      userId, config,
+    });
   };
 
   nextPage = () => {
     const { favorite_option } = this.props.favorites;
     if (favorite_option.next) {
       const { apikey, userId } = this.props.auth;
-      axios.get(`${url}profile/favorite/${userId}?${favorite_option.next}`,{
+      const config = {
         headers: {
           Authorization: apikey,
         },
-      })
-      .then((res) => {
-        const { data } = res;
-        const { favorite_data } = this.props.favorites;
-        this.props._SET_FAVORITE({
-          data: [...favorite_data, ...data.data],
-          options: data.options,
-        });
-      })
-      .catch((err) => console.log(err));
+      };
+      this.props._SET_FAVORITE_NEXT({
+        userId,
+        config,
+        options: favorite_option.next,
+      });
     }
   }
 
@@ -126,25 +109,23 @@ export class Favorite extends Component {
   }
 
   render() {
-    const { favorite_data } = this.props.favorites;
-    const { isLoading, isError } = this.state;
+    const { favorite_data, favorite_loading, favorite_err } = this.props.favorites;
     return (
       <SafeAreaView style={styles.container}>
-        <Loader isLoading={isLoading} />
+        <Loader isLoading={favorite_loading} />
         <Header />
-        {isError && (
+        {favorite_data.length === 0 || favorite_err && (
           <Error msg="Favorite book not found"/>
         )}
 
-        {!isError && (
+        {!favorite_err && favorite_data.length >= 1 && (
           <FlatList
             data={favorite_data}
             renderItem={({item}) => (
-              // console.log('new', item.created_at.slice(0,10))
               <ListItem
                 key={item.id}
                 title={item.name}
-                // subtitle={item.created_at.slice(0,10)}
+                subtitle={item.created_at.slice(0,10)}
                 leftIcon={{ name: 'book' }}
                 onPress={() => this.props.navigation.navigate('Detail',{
                   bookId: item.id,
@@ -157,7 +138,7 @@ export class Favorite extends Component {
             )}
             keyExtractor={item => item.book_favorites_id.toString()}
             onRefresh={() => this.fetchFavorite()}
-            refreshing={isLoading}
+            refreshing={favorite_loading}
             onEndReached={this.nextPage}
             onEndReachedThreshold={0.5}
             style={styles.full}
@@ -174,11 +155,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     height: deviceHeight,
-  },
-  svg: {
-    width: 250,
-    height: 200,
-    marginVertical: 30,
   },
   full: {
     flex: 1,
@@ -201,6 +177,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     // SET_FAVORITE
     _SET_FAVORITE: (data) => dispatch(SET_FAVORITE(data)),
+    // SET_FAVORITE NEXT
+    _SET_FAVORITE_NEXT: (data) => dispatch(SET_FAVORITE_NEXT(data)),
   };
 };
 
