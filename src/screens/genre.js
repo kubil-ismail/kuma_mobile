@@ -8,8 +8,6 @@ import {
   View,
 } from 'react-native';
 import { Text } from 'react-native-elements';
-import axios from 'axios';
-// import Icon from 'react-native-vector-icons/FontAwesome5';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
@@ -19,8 +17,6 @@ import { SET_DETAIL_GENRE, SET_DETAIL_GENRE_NEXT } from '../redux/actions/bookAc
 import BookCard from '../components/book';
 import Error from '../components/error';
 import Loader from '../components/loader';
-
-const url = 'http://192.168.1.4:8000/';
 
 export class Genre extends Component {
   constructor(props) {
