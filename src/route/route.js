@@ -28,6 +28,26 @@ export default function route() {
   return (
     <Stack.Navigator>
       <Stack.Screen
+        options={{ headerShown: false }}
+        component={Welcome}
+        name={'welcome'}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={'login'}
+        component={Login}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        component={SignUp}
+        name={'sign-up'}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        component={Verify}
+        name={'verify'}
+      />
+      <Stack.Screen
         options={{
           headerShown: false,
         }}
@@ -46,26 +66,6 @@ export default function route() {
       />
       <Stack.Screen component={UpdateSosmed} name={'Social Media'} />
       <Stack.Screen component={UpdateUser} name={'Profile'} />
-      <Stack.Screen
-        options={{headerShown: false}}
-        component={Welcome}
-        name={'welcome'}
-      />
-      <Stack.Screen
-        options={{headerShown: false}}
-        component={Verify}
-        name={'verify'}
-      />
-      <Stack.Screen
-        options={{headerShown: false}}
-        name={'login'}
-        component={Login}
-      />
-      <Stack.Screen
-        options={{headerShown: false}}
-        component={SignUp}
-        name={'sign-up'}
-      />
     </Stack.Navigator>
   );
 }
