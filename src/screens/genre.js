@@ -30,10 +30,6 @@ export class Genre extends Component {
       onSearch: true,
       isError: false,
     };
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (!loggedIn && !apikey && !userId) {
-      this.props.navigation.navigate('welcome');
-    }
   }
 
   fetchBook = (page = 1) => {

@@ -28,11 +28,6 @@ export class Verify extends Component {
     this.state = {
       code: null,
     };
-
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (loggedIn && apikey && userId) {
-      this.props.navigation.navigate('home');
-    }
   }
 
   activate = async () => {

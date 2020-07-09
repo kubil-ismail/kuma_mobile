@@ -32,11 +32,6 @@ export class Detail extends Component {
       isError: false,
       InputReview: null,
     };
-
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (!loggedIn && !apikey && !userId) {
-      this.props.navigation.navigate('welcome');
-    }
   }
 
   fetchBook = () => {

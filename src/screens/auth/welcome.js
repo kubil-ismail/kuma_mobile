@@ -5,7 +5,22 @@ import { Button, Image, Text  } from 'react-native-elements';
 
 import svg from '../../assets/image/undraw_book_lover_mkck.png';
 
-export default class Welcome extends Component {
+// Imports: Redux Actions
+import { connect } from 'react-redux';
+import { login } from '../../redux/actions/authActions';
+
+export class Welcome extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: null,
+      password: null,
+      isLoading: false,
+      isError: false,
+      errorMsg: null,
+    };
+  }
+
   render() {
     return (
       <ScrollView>
@@ -70,3 +85,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
+
+// Map State To Props (Redux Store Passes State To Component)
+const mapStateToProps = (state) => {
+  // Redux Store --> Component
+  return {
+    auth: state.authReducer,
+  };
+};
+
+// Map Dispatch To Props (Dispatch Actions To Reducers. Reducers Then Modify The Data And Assign It To Your Props)
+const mapDispatchToProps = (dispatch) => {
+  // Action
+  return {
+    // Login
+    reduxLogin: (trueFalse) => dispatch(login(trueFalse)),
+  };
+};
+
+// Exports
+export default connect(mapStateToProps, mapDispatchToProps)(Welcome);

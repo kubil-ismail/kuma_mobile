@@ -23,14 +23,6 @@ import Loader from '../components/loader';
 const url = 'http://192.168.1.4:8000/';
 
 export class Favorite extends Component {
-  constructor(props) {
-    super(props);
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (!loggedIn && !apikey && !userId) {
-      this.props.navigation.navigate('welcome');
-    }
-  }
-
   fetchFavorite = () => {
     const { apikey, userId } = this.props.auth;
     const config = {

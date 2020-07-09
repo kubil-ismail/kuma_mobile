@@ -23,14 +23,6 @@ import Error from '../components/error';
 import Loader from '../components/loader';
 
 export class User extends Component {
-  constructor(props) {
-    super(props);
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (!loggedIn && !apikey && !userId) {
-      this.props.navigation.navigate('welcome');
-    }
-  }
-
   fetchProfile = () => {
     const { apikey, userId } = this.props.auth;
     const config = {
@@ -45,7 +37,6 @@ export class User extends Component {
 
   onLogout = () => {
     this.props._logout();
-    this.props.navigation.navigate('welcome');
   }
 
   update = () => {

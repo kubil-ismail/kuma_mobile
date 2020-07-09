@@ -30,16 +30,12 @@ export class Login extends Component {
       isError: false,
       errorMsg: null,
     };
-
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (loggedIn && apikey && userId) {
-      this.props.navigation.navigate('home');
-    }
   }
 
   onLogin = () => {
     const { email, password } = this.state;
     if (email !== null && password !== null) {
+      this.setState({ isLoading: true });
       axios.post(`${url}auth/login`, {
         email, password,
       }).then((res) => {
@@ -50,7 +46,7 @@ export class Login extends Component {
             apikey: data.apiKey,
             userId: data.userId,
           });
-          this.props.navigation.navigate('home');
+          // this.props.navigation.navigate('home');
         } else {
           this.props.reduxLogin({
             status: false,

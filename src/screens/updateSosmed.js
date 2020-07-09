@@ -28,10 +28,6 @@ export class Update extends Component {
       instagram2: null,
       twitter2: null,
     };
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (!loggedIn && !apikey && !userId) {
-      this.props.navigation.navigate('welcome');
-    }
   }
 
   onUpdate = () => {

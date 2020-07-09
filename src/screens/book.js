@@ -23,14 +23,6 @@ import Loader from '../components/loader';
 import Error from '../components/error';
 
 export class Book extends Component {
-  constructor(props) {
-    super(props);
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (!loggedIn && !apikey && !userId) {
-      this.props.navigation.navigate('welcome');
-    }
-  }
-
   fetchBook = async (page = 1) => {
     this.props._SET_BOOK({ page: page });
   };
