@@ -1,13 +1,13 @@
 /* eslint-disable prettier/prettier */
+import { post } from '../../helper/http';
 
 // Login
 export const login = (request) => ({
   type: 'LOGIN',
-  payload: {
-    status: request.status,
-    userId: request.userId,
-    apikey: request.apikey,
-  },
+  payload: post({
+    url: 'auth/login',
+    body: request.body,
+  }),
 });
 
 // Sign Up
