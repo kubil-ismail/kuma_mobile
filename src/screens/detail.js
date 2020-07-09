@@ -41,24 +41,12 @@ export class Detail extends Component {
 
   fetchBook = () => {
     const { bookId } = this.props.route.params;
-    axios.get(`${url}book/${bookId}`)
-    .then((res) => {
-      const { data } = res;
-      this.props._SET_DETAIL({
-        data: data.data[0],
-      });
-      this.setState({ isLoading: false });
-    }).catch(() => this.onError());
+    this.props._SET_DETAIL({ bookId });
   };
 
   fetchReview = () => {
     const { bookId } = this.props.route.params;
-    axios.get(`${url}review?book_id=${parseInt(bookId, 10)}&limit=5`)
-    .then((res) => {
-      const { data } = res;
-      this.props._SET_REVIEW({ data: data.data });
-      this.setState({ isLoading: false });
-    }).catch(() => this.onError());
+    this.props._SET_REVIEW({ bookId });
   };
 
   addFavorite = () => {
@@ -112,16 +100,17 @@ export class Detail extends Component {
   }
 
   render() {
-    const book_detail = this.props.detail, book_review = this.props.review;
-    const { isError, isLoading } = this.state;
+    const book_detail = this.props.detail,
+    book_review = this.props.review;
+
     return (
       <SafeAreaView style={styles.container}>
-        <Loader isLoading={isLoading} />
-        {isError && (
+        <Loader isLoading={this.props.bookLoading} />
+        {this.props.bookErr && (
           <Error />
         )}
 
-        {!isError && !isLoading && (
+        {!this.props.bookErr && !this.props.bookLoading && (
           <ScrollView>
             <Image
               source={{ uri: `${url}${book_detail.cover}` }}
@@ -145,9 +134,9 @@ export class Detail extends Component {
                 // eslint-disable-next-line react-native/no-inline-styles
                 buttonContainerStyle={{ backgroundColor: '#e5f9fd' }}
                 buttons={[
-                  book_detail.genre,
-                  book_detail.status,
-                  book_detail.language,
+                  book_detail.genre || '',
+                  book_detail.status || '',
+                  book_detail.language || '',
                 ]}
               />
               {/* About This Book */}
@@ -258,6 +247,9 @@ const mapStateToProps = (state) => {
     auth: state.authReducer,
     detail: state.bookReducer.book_detail,
     review: state.bookReducer.book_review,
+    bookLoading: state.bookReducer.detail_loading,
+    bookErr: state.bookReducer.detail_err,
+    reviewLoading: state.bookReducer.review_loading,
   };
 };
 

@@ -16,6 +16,10 @@ const initialState = {
   search_loading: false,
   search_err: false,
   search_msg: null,
+  detail_loading: false,
+  detail_err: false,
+  review_loading: false,
+  review_err: false,
 };
 
 // Reducers (Modifies The State And Returns A New State)
@@ -52,13 +56,32 @@ const bookReducer = (state = initialState, action) => {
       };
     }
     // SET DETAIL
-    case 'SET_DETAIL': {
-      const { data } = action.payload;
+    case 'SET_DETAIL_PENDING': {
       return {
         // State
         ...state,
         // Redux Store
-        book_detail: data,
+        detail_loading: true,
+      };
+    }
+    case 'SET_DETAIL_REJECTED': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        detail_loading: false,
+        detail_err: true,
+      };
+    }
+    case 'SET_DETAIL_FULFILLED': {
+      const { data } = action.payload.data;
+      return {
+        // State
+        ...state,
+        // Redux Store
+        book_detail: data[0],
+        detail_loading: false,
+        detail_err: false,
       };
     }
     // DETAIL_GENRE
@@ -73,13 +96,32 @@ const bookReducer = (state = initialState, action) => {
       };
     }
     // SET REVIEWS
-    case 'SET_REVIEW': {
-      const { data } = action.payload;
+    case 'SET_REVIEW_PENDING': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        review_loading: true,
+      };
+    }
+    case 'SET_REVIEW_REJECTED': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        review_err: true,
+        review_loading: false,
+      };
+    }
+    case 'SET_REVIEW_FULFILLED': {
+      const { data } = action.payload.data;
       return {
         // State
         ...state,
         // Redux Store
         book_review: data,
+        review_err: false,
+        review_loading: false,
       };
     }
     // SET SEARCH

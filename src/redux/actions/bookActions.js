@@ -12,9 +12,9 @@ export const SET_BOOK = (request) => ({
 // SET_DETAIL
 export const SET_DETAIL = (request) => ({
   type: 'SET_DETAIL',
-  payload: {
-    data: request.data,
-  },
+  payload: get({
+    url: `book/${request.bookId}`,
+  }),
 });
 
 // SET genre Book
@@ -29,9 +29,9 @@ export const SET_DETAIL_GENRE = (request) => ({
 // SET_REVIEW
 export const SET_REVIEW = (request) => ({
   type: 'SET_REVIEW',
-  payload: {
-    data: request.data,
-  },
+  payload: get({
+    url: `review?book_id=${parseInt(request.bookId, 10)}&limit=5`,
+  }),
 });
 
 // SET_SEARCH
