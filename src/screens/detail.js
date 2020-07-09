@@ -16,7 +16,8 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { SET_DETAIL, SET_REVIEW } from '../redux/actions/bookActions';
+import { SET_DETAIL, SET_REVIEW, ADD_REVIEW } from '../redux/actions/bookActions';
+import { ADD_FAVORITE } from '../redux/actions/favoriteActions';
 
 // Import component
 import Error from '../components/error';
@@ -28,9 +29,9 @@ export class Detail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: true,
-      isError: false,
       InputReview: null,
+      addFavorite: true,
+      addReview: true,
     };
   }
 
@@ -52,41 +53,50 @@ export class Detail extends Component {
         Authorization: apikey,
       },
     };
-
-    axios.post(`${url}favorite`, { book_id: bookId, user_id: userId}, config)
-    .then(() => ToastAndroid.show('Book add to favorite list', ToastAndroid.SHORT))
-    .catch(() => ToastAndroid.show('Something wrong. Try again', ToastAndroid.SHORT));
+    const body = {
+      book_id: bookId, user_id: userId,
+    };
+    this.props._ADD_FAVORITE({ body, config });
+    const { addFavorite } = this.state;
+    const { add_loading, add_err } = this.props.favorite;
+    if (addFavorite && add_loading === false && add_err === false) {
+      ToastAndroid.show('Book add to favorite list', ToastAndroid.SHORT);
+      this.setState({ addFavorite: false });
+    } else {
+      ToastAndroid.show('Something wrong. Try again', ToastAndroid.SHORT);
+    }
   }
 
   addReview = () => {
     const { InputReview } = this.state;
-    const { apikey, userId } = this.props.auth;
-    const { bookId } = this.props.route.params;
-    const config = {
-      headers: {
-        Authorization: apikey,
-      },
-    };
+    if (InputReview) {
+      const { apikey, userId } = this.props.auth;
+      const { bookId } = this.props.route.params;
+      const config = {
+        headers: {
+          Authorization: apikey,
+        },
+      };
+      const body = {
+        book_id: bookId,
+        user_id: userId,
+        review: InputReview,
+        rating: 10,
+      };
 
-    axios.post(`${url}review`, {
-      book_id: bookId,
-      user_id: userId,
-      review: InputReview,
-      rating: 10,
-    }, config)
-    .then(() => {
-      ToastAndroid.show('Review success', ToastAndroid.SHORT);
-      this.setState({ InputReview: '' });
-      this.fetchReview();
-    })
-    .catch(() => ToastAndroid.show('Something wrong. Try again', ToastAndroid.SHORT));
-  }
-
-  onError = () => {
-    this.setState({
-      isError: true,
-      isLoading: false,
-    });
+      this.props._ADD_REVIEW({ body, config });
+      const { addReview } = this.state;
+      const { review_loading, review_err } = this.props.book;
+      if (addReview && review_loading === false && review_err === false) {
+        ToastAndroid.show('Review success', ToastAndroid.SHORT);
+        this.setState({ InputReview: null, addFavorite: false });
+        this.fetchReview();
+      } else {
+        ToastAndroid.show('Something wrong. Try again', ToastAndroid.SHORT);
+      }
+    } else {
+      ToastAndroid.show('Reviews cannot be empty', ToastAndroid.SHORT);
+    }
   }
 
   componentDidMount = () => {
@@ -240,8 +250,10 @@ const mapStateToProps = (state) => {
   // Redux Store --> Component
   return {
     auth: state.authReducer,
+    book: state.bookReducer,
     detail: state.bookReducer.book_detail,
     review: state.bookReducer.book_review,
+    favorite: state.favoriteReducer,
     bookLoading: state.bookReducer.detail_loading,
     bookErr: state.bookReducer.detail_err,
     reviewLoading: state.bookReducer.review_loading,
@@ -256,6 +268,9 @@ const mapDispatchToProps = (dispatch) => {
     _SET_DETAIL: (request) => dispatch(SET_DETAIL(request)),
     // Revies
     _SET_REVIEW: (request) => dispatch(SET_REVIEW(request)),
+    _ADD_REVIEW: (request) => dispatch(ADD_REVIEW(request)),
+    // Favorite
+    _ADD_FAVORITE: (request) => dispatch(ADD_FAVORITE(request)),
   };
 };
 

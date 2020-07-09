@@ -7,6 +7,8 @@ const initialState = {
   favorite_loading: false,
   favorite_err: false,
   facorite_msg: null,
+  add_loading: false,
+  add_err: false,
 };
 
 // Reducers (Modifies The State And Returns A New State)
@@ -53,6 +55,34 @@ const favoriteReducer = (state = initialState, action) => {
         favorite_err: false,
         favorite_data: [...state.favorite_data, ...data],
         favorite_option: options,
+      };
+    }
+    // ADD FAVORITE
+    case 'ADD_FAVORITE_PENDING': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        add_loading: true,
+        add_err: false,
+      };
+    }
+    case 'ADD_FAVORITE_REJECTED': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        add_loading: false,
+        add_err: true,
+      };
+    }
+    case 'ADD_FAVORITE_FULFILLED': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        add_loading: false,
+        add_err: false,
       };
     }
     // Default

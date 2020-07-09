@@ -142,6 +142,7 @@ const bookReducer = (state = initialState, action) => {
         ...state,
         // Redux Store
         review_loading: true,
+        review_err: false,
       };
     }
     case 'SET_REVIEW_REJECTED': {
@@ -213,6 +214,35 @@ const bookReducer = (state = initialState, action) => {
       };
     }
     // ==============================================================
+
+    // ADD REVIEW
+    case 'ADD_REVIEW_PENDING': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        review_loading: true,
+        review_err: false,
+      };
+    }
+    case 'ADD_REVIEW_REJECTED': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        review_loading: false,
+        review_err: true,
+      };
+    }
+    case 'ADD_REVIEW_FULFILLED': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        review_loading: false,
+        review_err: false,
+      };
+    }
 
     // Default
     default: {

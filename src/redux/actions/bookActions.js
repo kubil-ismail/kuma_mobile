@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import {get} from '../../helper/http';
+import { get, post } from '../../helper/http';
 
 // SET_BOOK
 export const SET_BOOK = (request) => ({
@@ -56,3 +56,14 @@ export const SET_SEARCH_NEXT = (request) => ({
     url: `book?${request.search}`,
   }),
 });
+
+// ADD_REVIEW
+export const ADD_REVIEW = (request) => ({
+  type: 'ADD_REVIEW',
+  payload: post({
+    url: 'review',
+    body: request.body,
+    config: request.config,
+  }),
+});
+
