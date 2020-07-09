@@ -23,6 +23,16 @@ export const post = async (data) => {
   }
 };
 
+// Post Data
+export const patch = async (data) => {
+  try {
+    const patchData = await axios.patch(url + data.url, data.body, data.config);
+    return patchData;
+  } catch (error) {
+    return error.response;
+  }
+};
+
 export const remove = async (data) => {
   try {
     const postData = await axios.delete(url + data.url, data.body, data.config);
@@ -30,4 +40,4 @@ export const remove = async (data) => {
   } catch (error) {
     return error.response;
   }
-}
+};
