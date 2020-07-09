@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   StyleSheet,
   ToastAndroid,
+  TouchableOpacity,
 } from 'react-native';
 import { ListItem } from 'react-native-elements';
 import axios from 'axios';
@@ -96,14 +97,6 @@ export class Favorite extends Component {
     );
   }
 
-  onComplete = () => {
-    this.setState({ isLoading: false, isError: false });
-  }
-
-  onError = () => {
-    this.setState({ isError: true, isLoading: false });
-  }
-
   componentDidMount = () => {
     this.fetchFavorite();
   }
@@ -131,8 +124,8 @@ export class Favorite extends Component {
                   bookId: item.id,
                   bookName: item.name,
                 })}
-                onLongPress={() => this.showAlert(item.book_favorites_id)}
                 bottomDivider
+                onLongPress={() => this.showAlert(item.book_favorites_id)}
                 chevron
               />
             )}

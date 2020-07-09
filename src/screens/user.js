@@ -11,11 +11,10 @@ import {
 } from 'react-native';
 import { Avatar, ListItem, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { SET_PROFILE, SET_EMAIL } from '../redux/actions/profileActions';
+import { SET_PROFILE } from '../redux/actions/profileActions';
 import { logout } from '../redux/actions/authActions';
 
 // Import component
@@ -23,17 +22,9 @@ import Header from '../components/header';
 import Error from '../components/error';
 import Loader from '../components/loader';
 
-const url = 'http://192.168.1.4:8000/';
-
 export class User extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isLoading: true,
-      isError: false,
-      userId: 30,
-      profile: [],
-    };
     const { loggedIn, apikey, userId } = this.props.auth;
     if (!loggedIn && !apikey && !userId) {
       this.props.navigation.navigate('welcome');
@@ -42,26 +33,14 @@ export class User extends Component {
 
   fetchProfile = () => {
     const { apikey, userId } = this.props.auth;
-    axios.get(`${url}profile/${userId}`, {
+    const config = {
       headers: {
         Authorization: apikey,
       },
-    })
-    .then((res) => {
-      const { data } = res.data;
-      this.props._SET_PROFILE({
-        name: data[0].fullname,
-        facebook: data[0].facebook,
-        instagram: data[0].instagram,
-        twitter: data[0].twitter,
-      });
-      this.props._SET_EMAIL({ email: data[0].email });
-      this.setState({
-        isLoading: false,
-        isError: false,
-      });
-    })
-    .catch(() => this.setState({ isError: true }));
+    };
+    this.props._SET_PROFILE({
+      userId, config,
+    });
   }
 
   onLogout = () => {
@@ -78,16 +57,23 @@ export class User extends Component {
   }
 
   render() {
-    const { isError, isLoading } = this.state;
-    const { name, email, facebook, instagram, twitter } = this.props.profile;
+    const {
+      name,
+      email,
+      facebook,
+      instagram,
+      twitter,
+      profile_loading,
+      profile_err,
+    } = this.props.profile;
     return (
       <SafeAreaView style={styles.container}>
-        <Loader isLoading={isLoading} />
+        <Loader isLoading={profile_loading} />
         <Header />
-        {isError && (
+        {profile_err && (
           <Error />
         )}
-        {!isError && !isLoading && (
+        {!profile_err && !profile_loading && (
           <ScrollView>
             <View style={styles.body}>
               <Avatar
@@ -157,7 +143,7 @@ export class User extends Component {
             <TouchableOpacity onPress={() => this.onLogout()}>
               <ListItem
                 key={8}
-                title="Log out" 
+                title="Log out"
                 leftIcon={
                   <View style={styles.icon}>
                     <Icon solid name="sign-out-alt" size={20} color="#6d6d6d" />
@@ -205,8 +191,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     // UPDATE PROFILE
     _SET_PROFILE: (request) => dispatch(SET_PROFILE(request)),
-    // UPDATE PROFILE
-    _SET_EMAIL: (request) => dispatch(SET_EMAIL(request)),
     // Logout
     _logout: (trueFalse) => dispatch(logout(trueFalse)),
   };

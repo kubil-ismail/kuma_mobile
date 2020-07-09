@@ -1,20 +1,11 @@
 /* eslint-disable prettier/prettier */
+import { get } from '../../helper/http';
 
 // SET PROFILE
 export const SET_PROFILE = (request) => ({
   type: 'SET_PROFILE',
-  payload: {
-    name: request.name,
-    facebook: request.facebook,
-    instagram: request.instagram,
-    twitter: request.twitter,
-  },
-});
-
-// SET EMAIL
-export const SET_EMAIL = (request) => ({
-  type: 'SET_EMAIL',
-  payload: {
-    email: request.email,
-  },
+  payload: get({
+    url: `profile/${request.userId}`,
+    body: request.config,
+  }),
 });
