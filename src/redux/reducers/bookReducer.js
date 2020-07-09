@@ -20,6 +20,8 @@ const initialState = {
   detail_err: false,
   review_loading: false,
   review_err: false,
+  book_genre_loading: false,
+  book_genre_err: false,
 };
 
 // Reducers (Modifies The State And Returns A New State)
@@ -55,6 +57,8 @@ const bookReducer = (state = initialState, action) => {
         book_option: options,
       };
     }
+    // ==============================================================
+
     // SET DETAIL
     case 'SET_DETAIL_PENDING': {
       return {
@@ -84,17 +88,53 @@ const bookReducer = (state = initialState, action) => {
         detail_err: false,
       };
     }
+    // ==============================================================
+
     // DETAIL_GENRE
-    case 'SET_DETAIL_GENRE': {
-      const { data, options } = action.payload;
+    case 'SET_DETAIL_GENRE_PENDING': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        book_genre_loading: true,
+      };
+    }
+    case 'SET_DETAIL_GENRE_REJECTED': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        book_genre_loading: false,
+        book_genre_err: true,
+      };
+    }
+    case 'SET_DETAIL_GENRE_FULFILLED': {
+      const { data, options } = action.payload.data;
       return {
         // State
         ...state,
         // Redux Store
         genre_book_data: data,
         genre_book_options: options,
+        book_genre_loading: false,
       };
     }
+    // ==============================================================
+
+    // DETAIL_GENRE_NEXT
+    case 'SET_DETAIL_GENRE_NEXT_FULFILLED': {
+      const { data, options } = action.payload.data;
+      return {
+        // State
+        ...state,
+        // Redux Store
+        genre_book_data: [...state.genre_book_data, ...data],
+        genre_book_options: options,
+        book_genre_loading: false,
+      };
+    }
+    // ==============================================================
+
     // SET REVIEWS
     case 'SET_REVIEW_PENDING': {
       return {
@@ -124,6 +164,8 @@ const bookReducer = (state = initialState, action) => {
         review_loading: false,
       };
     }
+    // ==============================================================
+
     // SET SEARCH
     case 'SET_SEARCH_PENDING': {
       return {
@@ -155,6 +197,8 @@ const bookReducer = (state = initialState, action) => {
         search_option: options,
       };
     }
+    // ==============================================================
+
     // SET SEARCH NEXT
     case 'SET_SEARCH_NEXT_FULFILLED': {
       const { data, options } = action.payload.data;
@@ -168,6 +212,8 @@ const bookReducer = (state = initialState, action) => {
         search_option: options,
       };
     }
+    // ==============================================================
+
     // Default
     default: {
       return state;

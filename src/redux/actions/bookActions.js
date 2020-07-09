@@ -17,13 +17,20 @@ export const SET_DETAIL = (request) => ({
   }),
 });
 
-// SET genre Book
+// SET_DETAIL_GENRE
 export const SET_DETAIL_GENRE = (request) => ({
   type: 'SET_DETAIL_GENRE',
-  payload: {
-    data: request.data,
-    options: request.options,
-  },
+  payload: get({
+    url: `book/genre/${request.genreId}?limit=10&page=${request.page}`,
+  }),
+});
+
+// SET_DETAIL_GENRE_NEXT
+export const SET_DETAIL_GENRE_NEXT = (request) => ({
+  type: 'SET_DETAIL_GENRE_NEXT',
+  payload: get({
+    url: `book/genre/${request.genreId}?${request.options}`,
+  }),
 });
 
 // SET_REVIEW
@@ -42,6 +49,7 @@ export const SET_SEARCH = (request) => ({
   }),
 });
 
+// SET_SEARCH_NEXT
 export const SET_SEARCH_NEXT = (request) => ({
   type: 'SET_SEARCH_NEXT',
   payload: get({

@@ -13,7 +13,7 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { SET_DETAIL_GENRE } from '../redux/actions/bookActions';
+import { SET_DETAIL_GENRE, SET_DETAIL_GENRE_NEXT } from '../redux/actions/bookActions';
 
 // import component
 import BookCard from '../components/book';
@@ -42,31 +42,18 @@ export class Genre extends Component {
 
   fetchBook = (page = 1) => {
     const { genreId } = this.props.route.params;
-    axios.get(`${url}book/genre/${genreId}?limit=4&page=${page}`)
-    .then((res) => {
-      const { data } = res;
-      this.props._SET_DETAIL_GENRE({
-        data: data.data,
-        options: data.options,
-      });
-      this.setState({ isLoading: false });
-    })
-    .catch(() => this.onError());
+    this.props._SET_DETAIL_GENRE({
+      genreId, page: page,
+    });
   };
 
   nextPage = () => {
-    const { genre_book_options, genre_book_data } = this.props.books;
+    const { genre_book_options } = this.props.books;
     if (genre_book_options.next) {
       const { genreId } = this.props.route.params;
-      axios.get(`${url}book/genre/${genreId}?${genre_book_options.next}`)
-      .then((res) => {
-        const { data } = res;
-        this.props._SET_DETAIL_GENRE({
-          data: [...genre_book_data, ...data.data],
-          options: data.options,
-        });
-      })
-      .catch(() => this.onError());
+      this.props._SET_DETAIL_GENRE_NEXT({
+        genreId, options: genre_book_options.next,
+      });
     }
   }
 
@@ -79,20 +66,19 @@ export class Genre extends Component {
   }
 
   render() {
-    const { genre_book_data } = this.props.books;
-    const { isError, isLoading } = this.state;
+    const { genre_book_data, book_genre_loading, book_genre_err } = this.props.books;
     return (
       <SafeAreaView style={styles.container}>
-        <Loader isLoading={isLoading} />
-        {isError && (
+        <Loader isLoading={book_genre_loading} />
+        {book_genre_err && (
           <Error />
         )}
-        {!isError && !isLoading && genre_book_data.length === undefined && (
+        {!book_genre_err && !book_genre_loading && genre_book_data.length === undefined && (
           <View style={styles.center}>
             <Text>Book Not Found</Text>
           </View>
         )}
-        {!isError && !isLoading && genre_book_data.length >= 1 && (
+        {!book_genre_err && !book_genre_loading && genre_book_data.length >= 1 && (
           <>
             <FlatList
               data={genre_book_data}
@@ -107,7 +93,7 @@ export class Genre extends Component {
               )}
               keyExtractor={item => item.id.toString()}
               onRefresh={() => this.fetchBook()}
-              refreshing={isLoading}
+              refreshing={book_genre_loading}
               onEndReached={this.nextPage}
               onEndReachedThreshold={0.5}
             />
@@ -145,8 +131,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
-    // Books
+    // _SET_DETAIL_GENRE
     _SET_DETAIL_GENRE: (request) => dispatch(SET_DETAIL_GENRE(request)),
+    // _SET_DETAIL_GENRE_NEXT
+    _SET_DETAIL_GENRE_NEXT: (request) => dispatch(SET_DETAIL_GENRE_NEXT(request)),
   };
 };
 
