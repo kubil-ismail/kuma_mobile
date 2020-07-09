@@ -83,6 +83,37 @@ const profileReducer = (state = initialState, action) => {
         },
       };
     }
+
+    // UPDATE NAME
+    case 'UPDATE_NAME_PENDING': {
+      return {
+        ...state,
+        ...{
+          update_loading: true,
+          update_err: false,
+        },
+      };
+    }
+    case 'UPDATE_NAME_REJECTED': {
+      return {
+        ...state,
+        ...{
+          update_loading: false,
+          update_err: true,
+        },
+      };
+    }
+    case 'UPDATE_NAME_FULFILLED': {
+      const { data } = action.payload.data;
+      return {
+        ...state,
+        ...{
+          update_loading: false,
+          update_err: false,
+          name: data[0].fullname,
+        },
+      };
+    }
     // Default
     default: {
       return state;

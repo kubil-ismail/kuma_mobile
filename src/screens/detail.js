@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import { ButtonGroup, Button, Card, Image, Input, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';

@@ -31,8 +31,6 @@ const Stack = createStackNavigator();
 export class Route extends Component {
   render() {
     const { loggedIn, apikey, userId } = this.props.auth;
-    console.log('welcome', this.props.auth);
-
     return (
       <Stack.Navigator>
         {!loggedIn && !apikey && !userId ? (

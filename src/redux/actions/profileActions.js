@@ -19,3 +19,13 @@ export const UPDATE_PROFILE = (request) => ({
     config: request.config,
   }),
 });
+
+// SET NAME
+export const UPDATE_NAME = (request) => ({
+  type: 'UPDATE_NAME',
+  payload: patch({
+    url: `profile/${request.userId}`,
+    body: request.body,
+    config: request.config,
+  }),
+});
