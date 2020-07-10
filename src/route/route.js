@@ -1,10 +1,14 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+
+// Imports: Redux Actions
+import { connect } from 'react-redux';
+import { login } from '../redux/actions/authActions';
 
 // Navigator
 import {createStackNavigator} from '@react-navigation/stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import Member from './member-route';
+import Admin from './admin-route';
 
 // Screens
 import Welcome from '../screens/auth/welcome';
@@ -12,28 +16,22 @@ import Login from '../screens/auth/login';
 import SignUp from '../screens/auth/signUp';
 import Verify from '../screens/auth/verify';
 
-// Imports: Redux Actions
-import { connect } from 'react-redux';
-import { login } from '../redux/actions/authActions';
-
-import Home from '../screens/book';
-import Favorite from '../screens/favorite';
-import User from '../screens/user';
 import UpdateSosmed from '../screens/updateSosmed';
 import UpdateUser from '../screens/updateUser';
 import Detail from '../screens/detail';
 import Genre from '../screens/genre';
-import Search from '../screens/search';
 
-const BottomTab = createBottomTabNavigator();
+import adminAuthor from '../screens/admin/admin.addAuthor';
+
 const Stack = createStackNavigator();
 
 export class Route extends Component {
   render() {
-    const { loggedIn, apikey, userId } = this.props.auth;
+    const { loggedIn, apikey, userId, role } = this.props.auth;
     return (
       <Stack.Navigator>
-        {!loggedIn && !apikey && !userId ? (
+        {/* Auth Page */}
+        {!loggedIn && !apikey && !userId && !role && (
           <>
             <Stack.Screen
               options={{headerShown: false}}
@@ -56,13 +54,16 @@ export class Route extends Component {
               name={'sign-up'}
             />
           </>
-        ) : (
+        )}
+
+        {/* User page */}
+        {loggedIn && apikey && userId && role === 1 && (
           <>
             <Stack.Screen
               options={{
                 headerShown: false,
               }}
-              component={Tab}
+              component={Member}
               name={'home'}
             />
             <Stack.Screen
@@ -79,60 +80,35 @@ export class Route extends Component {
             <Stack.Screen component={UpdateUser} name={'Profile'} />
           </>
         )}
+
+        {/* Admin Page */}
+        {loggedIn && apikey && userId && role === 2 && (
+          <>
+            <Stack.Screen
+              options={{
+                headerShown: false,
+              }}
+              component={Admin}
+              name={'admin'}
+            />
+            <Stack.Screen
+              component={adminAuthor}
+              name={'add_author'}
+              options={(req) => ({ title: 'New Author' })}
+            />
+            <Stack.Screen component={UpdateSosmed} name={'Social Media'} />
+            <Stack.Screen component={UpdateUser} name={'Profile'} />
+            <Stack.Screen
+              options={(req) => ({ title: req.route.params.bookName })}
+              component={Detail}
+              name={'Detail'}
+            />
+          </>
+        )}
       </Stack.Navigator>
     );
   }
 }
-
-export class Tab extends Component {
-  render() {
-    return (
-      <BottomTab.Navigator>
-        <BottomTab.Screen
-          options={{
-            title: 'Home',
-            tabBarIcon: ({color, size}) => (
-              <Icon name="book" color={color} size={size} />
-            ),
-          }}
-          component={Home}
-          name="home"
-        />
-        <BottomTab.Screen
-          options={{
-            title: 'Search',
-            tabBarIcon: ({color, size}) => (
-              <Icon name="search" color={color} size={size} />
-            ),
-          }}
-          component={Search}
-          name="search"
-        />
-        <BottomTab.Screen
-          options={{
-            title: 'Favorite',
-            tabBarIcon: ({color, size}) => (
-              <Icon name="heart" solid color={color} size={size} />
-            ),
-          }}
-          component={Favorite}
-          name="favorite"
-        />
-        <BottomTab.Screen
-          options={{
-            title: 'Profile',
-            tabBarIcon: ({color, size}) => (
-              <Icon name="user" solid color={color} size={size} />
-            ),
-          }}
-          component={User}
-          name="user"
-        />
-      </BottomTab.Navigator>
-    );
-  }
-}
-
 
 // Map State To Props (Redux Store Passes State To Component)
 const mapStateToProps = (state) => {

@@ -9,6 +9,9 @@ import favoriteReducer from './favoriteReducers';
 import genreReducer from './genreReducer';
 import profileReducer from './profileReducer';
 
+// admin
+import adminAuthor from './admin/authorReducer';
+
 // Redux: Root Reducer
 const rootReducer = combineReducers({
   authReducer,
@@ -16,6 +19,8 @@ const rootReducer = combineReducers({
   favoriteReducer,
   genreReducer,
   profileReducer,
+  // Admin
+  adminAuthor,
 });
 
 // Exports

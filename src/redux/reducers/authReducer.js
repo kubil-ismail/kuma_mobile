@@ -5,6 +5,7 @@ const initialState = {
   apikey: null,
   userId: null,
   email: null,
+  role: null,
   isLoading: false,
   isError: false,
   errMsg: null,
@@ -42,7 +43,7 @@ const authReducer = (state = initialState, action) => {
           ...state,
           ...{
             loggedIn: status,
-            apikey: data.apikey,
+            apikey: data.apiKey,
             userId: data.userId,
             role: data.role,
             isLoading: false,
@@ -76,6 +77,7 @@ const authReducer = (state = initialState, action) => {
           loggedIn: false,
           apikey: false,
           userId: false,
+          role: false,
         },
       };
     }
