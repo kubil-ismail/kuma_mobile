@@ -5,6 +5,7 @@ import {
   Dimensions,
   SafeAreaView,
   StyleSheet,
+  ToastAndroid,
 } from 'react-native';
 import { Button, Text, Input, Image } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -14,24 +15,53 @@ import { connect } from 'react-redux';
 import { FETCH_AUTHOR } from '../../redux/actions/admin/authorActions';
 
 // Import component
-import Loader from '../../components/loader';
+// import Loader from '../../components/loader';
 
 import svg from '../../assets/image/undraw_like_dislike_1dfj.png';
+import axios from 'axios';
+
+const url = 'http://192.168.1.4:8000/';
 
 export class Admin_author extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: null,
+      isLoading: false,
+    };
+  }
+
   fetchAuthor = () => {
-    this.props._FETCH_AUTHOR();
+    this.props._ADD_AUTHOR();
   };
+
+  addAuthor = () => {
+    const { name } = this.state;
+    const { apikey } = this.props.auth;
+    const config = {
+      headers: {
+        Authorization: apikey,
+      },
+    };
+    if (name) {
+      this.setState({ isLoading: true });
+      axios.post(`${url}author`,{
+        name,
+      }, config)
+      .then(() => ToastAndroid.show('Add new successfully', ToastAndroid.SHORT))
+      .catch(() => ToastAndroid.show('Add new failed', ToastAndroid.SHORT));
+      this.setState({ isLoading: false });
+    }
+  }
 
   componentDidMount = () => {
     this.fetchAuthor();
   }
 
   render() {
-    // const { author, isLoading, isError } = this.props.author;
+    const { isLoading } = this.state;
     return (
       <SafeAreaView style={styles.container}>
-        {/* <Loader isLoading={isLoading} /> */}
         <Image
           source={svg}
           style={styles.svg}
@@ -49,11 +79,12 @@ export class Admin_author extends Component {
               color="black"
             />
           }
+          onChangeText={(e) => this.setState({ name: e })}
         />
         <Button
           title="Add New"
-          // loading={isLoading}
-          onPress={() => this.onLogin()}
+          loading={isLoading}
+          onPress={() => this.addAuthor()}
         />
       </SafeAreaView>
     );
@@ -93,8 +124,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
-    // FETCH_AUTHOR
-    _FETCH_AUTHOR: (data) => dispatch(FETCH_AUTHOR(data)),
+    // ADD_AUTHOR
+    _ADD_AUTHOR: (data) => dispatch(FETCH_AUTHOR(data)),
   };
 };
 

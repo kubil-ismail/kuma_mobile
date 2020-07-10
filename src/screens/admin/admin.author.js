@@ -18,12 +18,8 @@ import Header from '../../components/header';
 import Loader from '../../components/loader';
 
 export class Admin_author extends Component {
-  fetchAuthor = () => {
-    this.props._FETCH_AUTHOR();
-  };
-
   componentDidMount = () => {
-    this.fetchAuthor();
+    this.props._FETCH_AUTHOR();
   }
 
   render() {
@@ -56,6 +52,7 @@ export class Admin_author extends Component {
               )}
               keyExtractor={item => item.id.toString()}
               refreshing={isLoading}
+              onRefresh={() => this.props._FETCH_AUTHOR()}
               style={styles.full}
             />
           </View>
