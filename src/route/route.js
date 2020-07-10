@@ -21,7 +21,8 @@ import UpdateUser from '../screens/updateUser';
 import Detail from '../screens/detail';
 import Genre from '../screens/genre';
 
-import adminAuthor from '../screens/admin/admin.addAuthor';
+import admin_author from '../screens/admin/admin.addAuthor';
+import Admin_genre from '../screens/admin/admin.addGenre';
 
 const Stack = createStackNavigator();
 
@@ -92,9 +93,14 @@ export class Route extends Component {
               name={'admin'}
             />
             <Stack.Screen
-              component={adminAuthor}
+              component={admin_author}
               name={'add_author'}
-              options={(req) => ({ title: 'New Author' })}
+              options={() => ({ title: 'New Author' })}
+            />
+            <Stack.Screen
+              component={Admin_genre}
+              name={'add_genre'}
+              options={() => ({ title: 'New Genre' })}
             />
             <Stack.Screen component={UpdateSosmed} name={'Social Media'} />
             <Stack.Screen component={UpdateUser} name={'Profile'} />

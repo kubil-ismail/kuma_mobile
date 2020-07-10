@@ -14,15 +14,12 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import { FETCH_AUTHOR } from '../../redux/actions/admin/authorActions';
 
-// Import component
-// import Loader from '../../components/loader';
-
 import svg from '../../assets/image/undraw_like_dislike_1dfj.png';
 import axios from 'axios';
 
 const url = 'http://192.168.1.4:8000/';
 
-export class Admin_author extends Component {
+export class Admin_genre extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -31,7 +28,7 @@ export class Admin_author extends Component {
     };
   }
 
-  addAuthor = () => {
+  addGenre = () => {
     const { name } = this.state;
     const { apikey } = this.props.auth;
     const config = {
@@ -41,11 +38,9 @@ export class Admin_author extends Component {
     };
     if (name) {
       this.setState({ isLoading: true });
-      axios.post(`${url}author`,{
-        name,
-      }, config)
-      .then(() => ToastAndroid.show('Add new successfully', ToastAndroid.SHORT))
-      .catch(() => ToastAndroid.show('Add new failed', ToastAndroid.SHORT));
+      axios.post(`${url}genre`, { name }, config)
+        .then(() => ToastAndroid.show('Add new successfully', ToastAndroid.SHORT))
+        .catch(() => ToastAndroid.show('Add new failed', ToastAndroid.SHORT));
       this.setState({ isLoading: false });
     }
   }
@@ -61,9 +56,9 @@ export class Admin_author extends Component {
           PlaceholderContent={<ActivityIndicator />}
         />
 
-        <Text h3 style={styles.title}>New Author</Text>
+        <Text h3 style={styles.title}>New Genre</Text>
         <Input
-          placeholder="Author name"
+          placeholder="Genre name"
           leftIcon={
             <Icon
               name="user"
@@ -74,9 +69,9 @@ export class Admin_author extends Component {
           onChangeText={(e) => this.setState({ name: e })}
         />
         <Button
-          title="Add New"
+          title="Genre New"
           loading={isLoading}
-          onPress={() => this.addAuthor()}
+          onPress={() => this.addGenre()}
         />
       </SafeAreaView>
     );
@@ -122,4 +117,4 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 // Exports
-export default connect(mapStateToProps, mapDispatchToProps)(Admin_author);
+export default connect(mapStateToProps, mapDispatchToProps)(Admin_genre);

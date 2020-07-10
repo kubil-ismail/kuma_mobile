@@ -1,11 +1,13 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import {
+  Alert,
   Dimensions,
   FlatList,
   SafeAreaView,
   StyleSheet,
   View,
+  ToastAndroid,
 } from 'react-native';
 import { Button, ListItem, Text } from 'react-native-elements';
 
@@ -17,9 +19,43 @@ import { FETCH_AUTHOR } from '../../redux/actions/admin/authorActions';
 import Header from '../../components/header';
 import Loader from '../../components/loader';
 
+import axios from 'axios';
+const url = 'http://192.168.1.4:8000/';
+
 export class Admin_author extends Component {
   componentDidMount = () => {
     this.props._FETCH_AUTHOR();
+  }
+
+  deleteAuthor = (id) => {
+    const { apikey } = this.props.auth;
+    const config = {
+      headers: {
+        Authorization: apikey,
+      },
+    };
+    axios.delete(`${url}author/${id}`, config)
+    .then(() => {
+      this.props._FETCH_AUTHOR();
+    }).catch(() => ToastAndroid.show('Something wrong, try again !', ToastAndroid.SHORT));
+  }
+
+  showAlert = (id) => {
+    Alert.alert(
+      'Are you sure ?',
+      'Remove from author list',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK', onPress: () => {
+            this.deleteAuthor(id);
+          },
+        },
+      ],
+    );
   }
 
   render() {
@@ -48,6 +84,7 @@ export class Admin_author extends Component {
                   leftIcon={{ name: 'book' }}
                   bottomDivider
                   chevron
+                  onLongPress={() => this.showAlert(item.id)}
                 />
               )}
               keyExtractor={item => item.id.toString()}

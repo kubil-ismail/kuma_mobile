@@ -1,11 +1,13 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import {
+  Alert,
   Dimensions,
   FlatList,
   SafeAreaView,
   StyleSheet,
   View,
+  ToastAndroid,
 } from 'react-native';
 import { Button, ListItem, Text } from 'react-native-elements';
 
@@ -17,13 +19,43 @@ import { SET_GENRE } from '../../redux/actions/genreActions';
 import Header from '../../components/header';
 import Loader from '../../components/loader';
 
-export class Admin_author extends Component {
-  fetchGenre = () => {
-    this.props._SET_GENRE();
-  };
+import axios from 'axios';
+const url = 'http://192.168.1.4:8000/';
 
-  componentDidMount = () => {
-    this.fetchGenre();
+export class Admin_author extends Component {
+  componentDidMount = () =>  {
+    this.props._SET_GENRE();
+  }
+
+  deleteGenre = (id) => {
+    const { apikey } = this.props.auth;
+    const config = {
+      headers: {
+        Authorization: apikey,
+      },
+    };
+    axios.delete(`${url}genre/${id}`, config)
+      .then(() => {
+        this.props._SET_GENRE();
+      }).catch(() => ToastAndroid.show('Something wrong, try again !', ToastAndroid.SHORT));
+  }
+
+  showAlert = (id) => {
+    Alert.alert(
+      'Are you sure ?',
+      'Remove from genre list',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK', onPress: () => {
+            this.deleteGenre(id);
+          },
+        },
+      ],
+    );
   }
 
   render() {
@@ -38,7 +70,7 @@ export class Admin_author extends Component {
           <Button
             type="clear"
             title="Add New"
-            onPress={() => this.props.navigation.navigate('add_author')}
+            onPress={() => this.props.navigation.navigate('add_genre')}
           />
         </View>
         {!genre_err && genre_data.length >= 1 && (
@@ -52,10 +84,12 @@ export class Admin_author extends Component {
                   leftIcon={{ name: 'book' }}
                   bottomDivider
                   chevron
+                  onLongPress={() => this.showAlert(item.id)}
                 />
               )}
               keyExtractor={item => item.id.toString()}
               refreshing={genre_loading}
+              onRefresh={() => this.props._SET_GENRE()}
               style={styles.full}
             />
           </View>
