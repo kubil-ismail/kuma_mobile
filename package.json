@@ -22,6 +22,7 @@
     "react-native-elements": "^2.0.4",
     "react-native-fab": "^1.0.17",
     "react-native-gesture-handler": "^1.6.1",
+    "react-native-global-font": "^1.0.2",
     "react-native-loading-spinner-overlay": "^1.1.0",
     "react-native-reanimated": "^1.9.0",
     "react-native-safe-area-context": "^3.0.7",
@@ -47,5 +48,10 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "rnpm": {
+    "assets": [
+      "./src/assets/fonts/NunitoSans"
+    ]
   }
 }

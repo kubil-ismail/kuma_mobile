@@ -220,6 +220,7 @@ const styles = StyleSheet.create({
     color: '#636d7b',
     paddingHorizontal: 10,
     textAlign: 'center',
+    fontFamily: 'NunitoSans-Regular',
   },
   review: {
     textAlign: 'left',
