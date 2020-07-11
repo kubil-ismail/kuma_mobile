@@ -9,29 +9,34 @@ import {
   ToastAndroid,
 } from 'react-native';
 import { Button, Text, Input, Image } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
 import { FETCH_AUTHOR } from '../../redux/actions/admin/authorActions';
+
+// Import component
+// import Loader from '../../components/loader';
 
 import svg from '../../assets/image/undraw_like_dislike_1dfj.png';
 import axios from 'axios';
 
 const url = 'http://192.168.1.4:8000/';
 
-export class Admin_genre extends Component {
+export class Admin_author extends Component {
   constructor(props) {
     super(props);
+    const { authorName } = this.props.route.params;
     this.state = {
-      name: null,
+      name: authorName,
       isLoading: false,
     };
   }
 
-  addGenre = () => {
+  editAuthor = () => {
     const { name } = this.state;
     const { apikey } = this.props.auth;
+    const { authorId } = this.props.route.params;
     const config = {
       headers: {
         Authorization: apikey,
@@ -39,10 +44,13 @@ export class Admin_genre extends Component {
     };
     if (name) {
       this.setState({ isLoading: true });
-      axios.post(`${url}genre`, { name }, config)
-        .then(() => ToastAndroid.show('Add new successfully', ToastAndroid.SHORT))
-        .catch(() => ToastAndroid.show('Add new failed', ToastAndroid.SHORT));
+      axios.patch(`${url}author/${authorId}`, {
+        name,
+      }, config)
+      .then(() => ToastAndroid.show('Edit successfully', ToastAndroid.SHORT))
+      .catch(() => ToastAndroid.show('Edit failed', ToastAndroid.SHORT));
       this.setState({ isLoading: false });
+      this.props._FETCH_AUTHOR();
     }
   }
 
@@ -57,22 +65,23 @@ export class Admin_genre extends Component {
             resizeMode="contain"
             PlaceholderContent={<ActivityIndicator />}
           />
-          <Text h3 style={styles.title}>New Genre</Text>
+          <Text h3 style={styles.title}>Edit Author</Text>
           <Input
-            placeholder="Genre name"
+            placeholder="Author name"
             leftIcon={
               <Icon
-                name="user"
+                name="book-reader"
                 size={24}
                 color="black"
               />
             }
+            defaultValue={this.state.name}
             onChangeText={(e) => this.setState({ name: e })}
           />
           <Button
-            title="Genre New"
+            title="Edit Author"
             loading={isLoading}
-            onPress={() => this.addGenre()}
+            onPress={() => this.editAuthor()}
           />
         </ScrollView>
       </SafeAreaView>
@@ -114,9 +123,9 @@ const mapDispatchToProps = (dispatch) => {
   // Action
   return {
     // ADD_AUTHOR
-    _ADD_AUTHOR: (data) => dispatch(FETCH_AUTHOR(data)),
+    _FETCH_AUTHOR: (data) => dispatch(FETCH_AUTHOR(data)),
   };
 };
 
 // Exports
-export default connect(mapStateToProps, mapDispatchToProps)(Admin_genre);
+export default connect(mapStateToProps, mapDispatchToProps)(Admin_author);

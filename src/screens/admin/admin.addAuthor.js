@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   Dimensions,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   ToastAndroid,
 } from 'react-native';
@@ -47,6 +48,7 @@ export class Admin_author extends Component {
       .then(() => ToastAndroid.show('Add new successfully', ToastAndroid.SHORT))
       .catch(() => ToastAndroid.show('Add new failed', ToastAndroid.SHORT));
       this.setState({ isLoading: false });
+      this.props._FETCH_AUTHOR();
     }
   }
 
@@ -54,30 +56,31 @@ export class Admin_author extends Component {
     const { isLoading } = this.state;
     return (
       <SafeAreaView style={styles.container}>
-        <Image
-          source={svg}
-          style={styles.svg}
-          resizeMode="contain"
-          PlaceholderContent={<ActivityIndicator />}
-        />
-
-        <Text h3 style={styles.title}>New Author</Text>
-        <Input
-          placeholder="Author name"
-          leftIcon={
-            <Icon
-              name="user"
-              size={24}
-              color="black"
-            />
-          }
-          onChangeText={(e) => this.setState({ name: e })}
-        />
-        <Button
-          title="Add New"
-          loading={isLoading}
-          onPress={() => this.addAuthor()}
-        />
+        <ScrollView>
+          <Image
+            source={svg}
+            style={styles.svg}
+            resizeMode="contain"
+            PlaceholderContent={<ActivityIndicator />}
+          />
+          <Text h3 style={styles.title}>New Author</Text>
+          <Input
+            placeholder="Author name"
+            leftIcon={
+              <Icon
+                name="user"
+                size={24}
+                color="black"
+              />
+            }
+            onChangeText={(e) => this.setState({ name: e })}
+          />
+          <Button
+            title="Add New"
+            loading={isLoading}
+            onPress={() => this.addAuthor()}
+          />
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -116,8 +119,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
-    // ADD_AUTHOR
-    _ADD_AUTHOR: (data) => dispatch(FETCH_AUTHOR(data)),
+    // FETCH_AUTHOR
+    _FETCH_AUTHOR: (data) => dispatch(FETCH_AUTHOR(data)),
   };
 };
 

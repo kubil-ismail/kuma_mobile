@@ -24,6 +24,9 @@ import Genre from '../screens/genre';
 import admin_author from '../screens/admin/admin.addAuthor';
 import Admin_genre from '../screens/admin/admin.addGenre';
 
+import admin_author_edit from '../screens/admin/admin.editAuthor';
+import Admin_genre_edit from '../screens/admin/admin.editGenre';
+
 const Stack = createStackNavigator();
 
 export class Route extends Component {
@@ -92,6 +95,7 @@ export class Route extends Component {
               component={Admin}
               name={'admin'}
             />
+            {/* ADD NEW */}
             <Stack.Screen
               component={admin_author}
               name={'add_author'}
@@ -101,6 +105,17 @@ export class Route extends Component {
               component={Admin_genre}
               name={'add_genre'}
               options={() => ({ title: 'New Genre' })}
+            />
+            {/* EDIT */}
+            <Stack.Screen
+              component={admin_author_edit}
+              name={'edit_author'}
+              options={() => ({ title: 'Edit Author' })}
+            />
+            <Stack.Screen
+              component={Admin_genre_edit}
+              name={'edit_genre'}
+              options={() => ({ title: 'Edit Genre' })}
             />
             <Stack.Screen component={UpdateSosmed} name={'Social Media'} />
             <Stack.Screen component={UpdateUser} name={'Profile'} />

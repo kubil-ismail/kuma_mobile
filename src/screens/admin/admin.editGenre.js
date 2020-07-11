@@ -9,11 +9,11 @@ import {
   ToastAndroid,
 } from 'react-native';
 import { Button, Text, Input, Image } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { FETCH_AUTHOR } from '../../redux/actions/admin/authorActions';
+import { SET_GENRE } from '../../redux/actions/genreActions';
 
 import svg from '../../assets/image/undraw_like_dislike_1dfj.png';
 import axios from 'axios';
@@ -23,8 +23,9 @@ const url = 'http://192.168.1.4:8000/';
 export class Admin_genre extends Component {
   constructor(props) {
     super(props);
+    const { genreName } = this.props.route.params;
     this.state = {
-      name: null,
+      name: genreName,
       isLoading: false,
     };
   }
@@ -32,6 +33,7 @@ export class Admin_genre extends Component {
   addGenre = () => {
     const { name } = this.state;
     const { apikey } = this.props.auth;
+    const { genreId } = this.props.route.params;
     const config = {
       headers: {
         Authorization: apikey,
@@ -39,10 +41,11 @@ export class Admin_genre extends Component {
     };
     if (name) {
       this.setState({ isLoading: true });
-      axios.post(`${url}genre`, { name }, config)
-        .then(() => ToastAndroid.show('Add new successfully', ToastAndroid.SHORT))
-        .catch(() => ToastAndroid.show('Add new failed', ToastAndroid.SHORT));
+      axios.patch(`${url}genre/${genreId}`, { name }, config)
+        .then(() => ToastAndroid.show('Edit successfully', ToastAndroid.SHORT))
+        .catch(() => ToastAndroid.show('Edit failed', ToastAndroid.SHORT));
       this.setState({ isLoading: false });
+      this.props._SET_GENRE();
     }
   }
 
@@ -57,20 +60,22 @@ export class Admin_genre extends Component {
             resizeMode="contain"
             PlaceholderContent={<ActivityIndicator />}
           />
-          <Text h3 style={styles.title}>New Genre</Text>
+
+          <Text h3 style={styles.title}>Edit Genre</Text>
           <Input
             placeholder="Genre name"
             leftIcon={
               <Icon
-                name="user"
+                name="swatchbook"
                 size={24}
                 color="black"
               />
             }
+            defaultValue={this.state.name}
             onChangeText={(e) => this.setState({ name: e })}
           />
           <Button
-            title="Genre New"
+            title="Edit genre"
             loading={isLoading}
             onPress={() => this.addGenre()}
           />
@@ -113,8 +118,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
-    // ADD_AUTHOR
-    _ADD_AUTHOR: (data) => dispatch(FETCH_AUTHOR(data)),
+    // SET_GENRE
+    _SET_GENRE: (data) => dispatch(SET_GENRE(data)),
   };
 };
 

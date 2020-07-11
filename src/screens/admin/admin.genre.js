@@ -85,6 +85,10 @@ export class Admin_author extends Component {
                   bottomDivider
                   chevron
                   onLongPress={() => this.showAlert(item.id)}
+                  onPress={() => this.props.navigation.navigate('edit_genre', {
+                    genreId: item.id,
+                    genreName: item.name,
+                  })}
                 />
               )}
               keyExtractor={item => item.id.toString()}
