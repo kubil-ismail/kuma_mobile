@@ -1,11 +1,13 @@
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import {
+  Alert,
   Dimensions,
   FlatList,
   SafeAreaView,
   StyleSheet,
   View,
+  ToastAndroid,
 } from 'react-native';
 import { ListItem, Text, Button } from 'react-native-elements';
 
@@ -17,10 +19,44 @@ import { SET_BOOK } from '../../redux/actions/bookActions';
 import Header from '../../components/header';
 import Loader from '../../components/loader';
 
+import axios from 'axios';
+const url = 'http://192.168.1.4:8000/';
+
 export class Admin_book extends Component {
   fetchBook = async (page = 1) => {
     this.props._SET_BOOK({ page: page });
   };
+
+  deleteBook = (id) => {
+    const { apikey } = this.props.auth;
+    const config = {
+      headers: {
+        Authorization: apikey,
+      },
+    };
+    axios.delete(`${url}book/${id}`, config)
+      .then(() => {
+        this.fetchBook();
+      }).catch(() => ToastAndroid.show('Something wrong, try again !', ToastAndroid.SHORT));
+  }
+
+  showAlert = (id) => {
+    Alert.alert(
+      'Are you sure ?',
+      'Remove from author list',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK', onPress: () => {
+            this.deleteBook(id);
+          },
+        },
+      ],
+    );
+  }
 
   componentDidMount = () => {
     this.fetchBook();
@@ -38,7 +74,7 @@ export class Admin_book extends Component {
           <Button
             type="clear"
             title="Add New"
-            onPress={() => this.props.navigation.navigate('add_author')}
+            onPress={() => this.props.navigation.navigate('add_book')}
           />
         </View>
         {!book_err && book_data.length >= 1 && (
@@ -56,6 +92,7 @@ export class Admin_book extends Component {
                     bookId: item.id,
                     bookName: item.name,
                   })}
+                  onLongPress={() => this.showAlert(item.id)}
                 />
               )}
               keyExtractor={item => item.id.toString()}
