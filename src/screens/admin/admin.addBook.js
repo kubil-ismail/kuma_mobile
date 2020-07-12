@@ -46,7 +46,7 @@ export class Admin_book extends Component {
     let options = {
       storageOptions: {
         skipBackup: true,
-        path: '../../assets/upload',
+        path: '../../assets/image/upload/',
       },
     };
     ImagePicker.launchImageLibrary(options, (response) => {
@@ -58,7 +58,7 @@ export class Admin_book extends Component {
         ToastAndroid.show('Something wrong, try again', ToastAndroid.SHORT);
       } else {
         this.setState({
-          fileName: response,
+          fileName: response.fileName,
           fileType: response.type,
           fileUri: response.uri,
         });
@@ -99,18 +99,28 @@ export class Admin_book extends Component {
       status,
     } = this.state;
 
+    // const { path, fileName, type } = fileData;
+
+    // const uri = path.replace('file://','');
+    // const photo = {
+    //   // uri: path.replace('file://', ''),
+    //   type: type,
+    //   name: fileName,
+    // };
+
+    // console.log(photo);
+
     const formData = new FormData();
     formData.append('name', 'name');
     formData.append('description', 'desc');
     formData.append('picture', {
-      name: fileName.fileName,
-      type: fileType,
-      uri: fileUri,
+      name: fileName,
+
     });
     formData.append('genreId', parseInt(1, 10));
     formData.append('authorId', parseInt(1, 10));
     formData.append('statusId', parseInt(1, 10));
-    formData.append('published', '19/12/2004');
+    formData.append('published', '20/20/2020');
     formData.append('language', 'language');
 
     axios.post(`${url}book`, formData, config)
