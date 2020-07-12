@@ -22,17 +22,29 @@ const url = 'http://192.168.1.4:8000/';
 export class Admin_book extends Component {
   constructor(props) {
     super(props);
+    const {
+      author_id,
+      cover,
+      description,
+      genre_id,
+      id,
+      language,
+      name,
+      published,
+      status_id,
+    } = props.route.params.book;
     this.state = {
-      name: 'null',
-      genre: 1,
-      author: 1,
-      status: 1,
-      language: 1,
-      date: '20/20/2000',
-      desc: 'oke',
+      id: id,
+      name: name,
+      genre: genre_id.toString(),
+      author: author_id.toString(),
+      status: status_id.toString(),
+      language: language,
+      date: published,
+      desc: description,
       fileName: '',
       fileType: '',
-      fileUri: '',
+      fileUri: cover,
       isLoading: false,
     };
   }
@@ -64,31 +76,29 @@ export class Admin_book extends Component {
   }
 
   renderFileData() {
-    if (this.state.fileUri) {
-      return <Image source={{ uri: this.state.fileUri}}
+    if (this.state.fileUri && !this.state.fileType) {
+      return <Image source={{ uri: `${url}${this.state.fileUri}` }}
         style={styles.images}
       />;
     } else {
-      return <Image source={{ uri: 'https://www.digopaul.com/wp-content/uploads/related_images/2015/09/08/placeholder_2.jpg'}}
+      return <Image source={{ uri: this.state.fileUri }}
         style={styles.images}
       />;
     }
   }
 
-  addBook = () => {
+  editBook = () => {
     const { apikey } = this.props.auth;
     const config = {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'application/x-www-form-urlencoded',
         Authorization: apikey,
       },
     };
     const {
+      id,
       name,
       desc,
-      fileName,
-      fileType,
-      fileUri,
       date,
       language,
       genre,
@@ -99,20 +109,15 @@ export class Admin_book extends Component {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('description', desc);
-    formData.append('picture', {
-      name: fileName,
-      type: fileType,
-      uri: fileUri,
-    });
-    formData.append('genreId', parseInt(genre, 10));
-    formData.append('authorId', parseInt(author, 10));
-    formData.append('statusId', parseInt(status, 10));
+    formData.append('genre_id', parseInt(genre, 10));
+    formData.append('author_id', parseInt(author, 10));
+    formData.append('status_id', parseInt(status, 10));
     formData.append('published', date);
     formData.append('language', language);
 
-    axios.post(`${url}book`, formData, config)
-    .then(() => ToastAndroid.show('Add successfuly', ToastAndroid.SHORT))
-    .catch(() => ToastAndroid.show('Something wrong, try again', ToastAndroid.SHORT));
+    axios.patch(`${url}book/${id}`, formData, config)
+      .then(() => ToastAndroid.show('Edit successfuly', ToastAndroid.SHORT))
+      .catch((ERR) => console.log(ERR.response));
   }
 
   render() {
@@ -120,7 +125,7 @@ export class Admin_book extends Component {
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView>
-          <Text h3 style={styles.title}>New Book</Text>
+          <Text h3 style={styles.title}>Edit Book</Text>
           <View style={styles.head}>
             {this.renderFileData()}
             <Button
@@ -130,36 +135,43 @@ export class Admin_book extends Component {
           </View>
           <Input
             placeholder="Book name"
+            defaultValue={this.state.name}
             onChangeText={(e) => this.setState({ name: e })}
           />
           <Input
             placeholder="Genre ID"
+            defaultValue={this.state.genre}
             onChangeText={(e) => this.setState({ genre: e })}
           />
           <Input
             placeholder="Author ID"
+            defaultValue={this.state.author}
             onChangeText={(e) => this.setState({ author: e })}
           />
           <Input
             placeholder="Status ID"
+            defaultValue={this.state.status}
             onChangeText={(e) => this.setState({ status: e })}
           />
           <Input
             placeholder="Language"
+            defaultValue={this.state.language}
             onChangeText={(e) => this.setState({ language: e })}
           />
           <Input
             placeholder="Date Published"
+            defaultValue={this.state.date}
             onChangeText={(e) => this.setState({ date: e })}
           />
           <Input
             placeholder="Description"
+            defaultValue={this.state.desc}
             onChangeText={(e) => this.setState({ desc: e })}
           />
           <Button
             title="Add Book"
             loading={isLoading}
-            onPress={() => this.addBook()}
+            onPress={() => this.editBook()}
           />
         </ScrollView>
       </SafeAreaView>

@@ -27,6 +27,7 @@ import admin_book from '../screens/admin/admin.addBook';
 
 import admin_author_edit from '../screens/admin/admin.editAuthor';
 import Admin_genre_edit from '../screens/admin/admin.editGenre';
+import admin_book_edit from '../screens/admin/admin.editBook';
 
 const Stack = createStackNavigator();
 
@@ -122,6 +123,11 @@ export class Route extends Component {
               component={Admin_genre_edit}
               name={'edit_genre'}
               options={() => ({ title: 'Edit Genre' })}
+            />
+            <Stack.Screen
+              component={admin_book_edit}
+              name={'edit_book'}
+              options={() => ({ title: 'Edit Book' })}
             />
             <Stack.Screen component={UpdateSosmed} name={'Social Media'} />
             <Stack.Screen component={UpdateUser} name={'Profile'} />

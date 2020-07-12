@@ -96,6 +96,7 @@ export class Admin_book extends Component {
                 />
               )}
               keyExtractor={item => item.id.toString()}
+              onRefresh={() => this.fetchBook()}
               refreshing={book_loading}
               style={styles.full}
             />
