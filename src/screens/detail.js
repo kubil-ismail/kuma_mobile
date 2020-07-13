@@ -17,6 +17,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { connect } from 'react-redux';
 import { SET_DETAIL, SET_REVIEW, ADD_REVIEW } from '../redux/actions/bookActions';
 import { ADD_FAVORITE } from '../redux/actions/favoriteActions';
+import { SET_FAVORITE } from '../redux/actions/favoriteActions';
 
 // Import component
 import Error from '../components/error';
@@ -44,6 +45,18 @@ export class Detail extends Component {
     this.props._SET_REVIEW({ bookId });
   };
 
+  fetchFavorite = () => {
+    const { apikey, userId } = this.props.auth;
+    const config = {
+      headers: {
+        Authorization: apikey,
+      },
+    };
+    this.props._SET_FAVORITE({
+      userId, config,
+    });
+  };
+
   addFavorite = () => {
     const { apikey, userId } = this.props.auth;
     const { bookId } = this.props.route.params;
@@ -60,6 +73,7 @@ export class Detail extends Component {
     const { add_loading, add_err } = this.props.favorite;
     if (addFavorite && add_loading === false && add_err === false) {
       ToastAndroid.show('Book add to favorite list', ToastAndroid.SHORT);
+      this.fetchFavorite();
       this.setState({ addFavorite: false });
     } else {
       ToastAndroid.show('Something wrong. Try again', ToastAndroid.SHORT);
@@ -271,6 +285,8 @@ const mapDispatchToProps = (dispatch) => {
     _ADD_REVIEW: (request) => dispatch(ADD_REVIEW(request)),
     // Favorite
     _ADD_FAVORITE: (request) => dispatch(ADD_FAVORITE(request)),
+    // SET_FAVORITE
+    _SET_FAVORITE: (data) => dispatch(SET_FAVORITE(data)),
   };
 };
 

@@ -9,7 +9,7 @@ import {
   ToastAndroid,
 } from 'react-native';
 import { Button, Text, Input, Image } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
@@ -68,7 +68,7 @@ export class Admin_author extends Component {
             placeholder="Author name"
             leftIcon={
               <Icon
-                name="user"
+                name="book-reader"
                 size={24}
                 color="black"
               />

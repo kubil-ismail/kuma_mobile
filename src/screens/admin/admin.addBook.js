@@ -13,7 +13,7 @@ import ImagePicker from 'react-native-image-picker';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { FETCH_AUTHOR } from '../../redux/actions/admin/authorActions';
+import { SET_BOOK } from '../../redux/actions/bookActions';
 
 import axios from 'axios';
 
@@ -111,7 +111,10 @@ export class Admin_book extends Component {
     formData.append('language', language);
 
     axios.post(`${url}book`, formData, config)
-    .then(() => ToastAndroid.show('Add successfuly', ToastAndroid.SHORT))
+    .then(() => {
+      this.props._SET_BOOK({ page: 1 });
+      ToastAndroid.show('Add successfuly', ToastAndroid.SHORT);
+    })
     .catch(() => ToastAndroid.show('Something wrong, try again', ToastAndroid.SHORT));
   }
 
@@ -205,8 +208,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
-    // ADD_AUTHOR
-    _ADD_AUTHOR: (data) => dispatch(FETCH_AUTHOR(data)),
+    // SET_BOOK
+    _SET_BOOK: (data) => dispatch(SET_BOOK(data)),
   };
 };
 

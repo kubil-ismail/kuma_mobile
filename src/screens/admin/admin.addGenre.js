@@ -9,11 +9,11 @@ import {
   ToastAndroid,
 } from 'react-native';
 import { Button, Text, Input, Image } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { FETCH_AUTHOR } from '../../redux/actions/admin/authorActions';
+import { SET_GENRE } from '../../redux/actions/genreActions';
 
 import svg from '../../assets/image/undraw_like_dislike_1dfj.png';
 import axios from 'axios';
@@ -40,7 +40,10 @@ export class Admin_genre extends Component {
     if (name) {
       this.setState({ isLoading: true });
       axios.post(`${url}genre`, { name }, config)
-        .then(() => ToastAndroid.show('Add new successfully', ToastAndroid.SHORT))
+        .then(() => {
+          this.props._SET_GENRE();
+          ToastAndroid.show('Add new successfully', ToastAndroid.SHORT)
+        })
         .catch(() => ToastAndroid.show('Add new failed', ToastAndroid.SHORT));
       this.setState({ isLoading: false });
     }
@@ -62,7 +65,7 @@ export class Admin_genre extends Component {
             placeholder="Genre name"
             leftIcon={
               <Icon
-                name="user"
+                name="swatchbook"
                 size={24}
                 color="black"
               />
@@ -113,8 +116,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
-    // ADD_AUTHOR
-    _ADD_AUTHOR: (data) => dispatch(FETCH_AUTHOR(data)),
+    // SET_GENRE
+    _SET_GENRE: (data) => dispatch(SET_GENRE(data)),
   };
 };
 

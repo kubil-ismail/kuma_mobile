@@ -98,7 +98,7 @@ export class Favorite extends Component {
       <SafeAreaView style={styles.container}>
         <Loader isLoading={favorite_loading} />
         <Header />
-        {favorite_data.length === 0 || favorite_err && (
+        {favorite_data.length === undefined && (
           <Error msg="Favorite book not found"/>
         )}
 
