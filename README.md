@@ -26,6 +26,9 @@ npm install
 npm run android
 ```
 
+## Screenshoot
+![](https://i.ibb.co/hFKjM5q/kuma-mobile-mockup.jpg)
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
