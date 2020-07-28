@@ -8,19 +8,20 @@
 ![](https://img.shields.io/github/release/kubil-ismail/kuma_mobile)
 ![](https://img.shields.io/github/issues/kubil-ismail/kuma_mobile)
 
-Is a real time chat build with react native and firebase
+# Kuma Mobile
+Kuma Books is a forum that unites book readers and exchange their opinions about books that have been read
 
 ## Installation
 
 Clone this repo
 
 ```bash
-https://github.com/kubil-ismail/storytalk.git
+https://github.com/kubil-ismail/kuma_mobile.git
 ```
 Intall dependency.
 
 ```bash
-cd storytalk
+cd kuma_mobile
 npm install
 npm run android
 ```
