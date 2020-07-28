@@ -23,7 +23,7 @@ import { SET_FAVORITE } from '../redux/actions/favoriteActions';
 import Error from '../components/error';
 import Loader from '../components/loader';
 
-const url = 'http://192.168.1.4:8000/';
+const url = 'http://18.209.178.237:8000/';
 
 export class Detail extends Component {
   constructor(props) {

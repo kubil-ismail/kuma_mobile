@@ -3,7 +3,7 @@ import React from 'react';
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Card } from 'react-native-elements';
 
-const url = 'http://192.168.1.4:8000/';
+const url = 'http://18.209.178.237:8000/';
 export default function book(props) {
   return (
     <TouchableOpacity
