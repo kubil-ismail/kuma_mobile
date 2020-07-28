@@ -18,7 +18,7 @@ import { signup } from '../../redux/actions/authActions';
 import svg from '../../assets/image/undraw_reading_0re1.png';
 import axios from 'axios';
 
-const url = 'http://192.168.1.4:8000/';
+const url = 'http://18.209.178.237:8000/';
 
 export class SignUp extends Component {
   constructor(props) {
@@ -46,7 +46,7 @@ export class SignUp extends Component {
             const { data } = res.data;
             this.setState({ isLoading: false });
             this.props.reduxSignUp(data.email);
-            this.props.navigation.navigate('verify');
+            this.props.navigation.navigate('login');
           })
           .catch((err) => {
             const { data } = err.response;
