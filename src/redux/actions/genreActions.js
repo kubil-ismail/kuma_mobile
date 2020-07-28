@@ -1,10 +1,8 @@
 /* eslint-disable prettier/prettier */
+import { get } from '../../helper/http';
 
 // SET GENRE
-export const genre = (request) => ({
-  type: 'SET',
-  payload: {
-    data: request.data,
-    options: request.options,
-  },
+export const SET_GENRE = () => ({
+  type: 'SET_GENRE',
+  payload: get({ url: 'genre' }),
 });

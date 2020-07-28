@@ -11,56 +11,42 @@ import {
 } from 'react-native';
 import { Avatar, Button, Text, Input } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { profile } from '../redux/actions/profileActions';
-
-const url = 'http://192.168.1.4:8000/';
+import { SET_PROFILE, UPDATE_NAME } from '../redux/actions/profileActions';
 
 export class Update extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: true,
-      isError: false,
-      userId: 30,
-      profile: [],
       facebook2: null,
       instagram2: null,
       twitter2: null,
       fullname: null,
     };
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (!loggedIn && !apikey && !userId) {
-      this.props.navigation.navigate('welcome');
-    }
   }
 
   onUpdate = () => {
     const { apikey, userId } = this.props.auth;
-    const { name, email, facebook, instagram, twitter } = this.props.profile;
-    const { facebook2, instagram2, twitter2, fullname } = this.state;
+    const { name, update_loading, update_err } = this.props.profile;
+    const { fullname } = this.state;
     const config = {
       headers: {
         Authorization: apikey,
       },
     };
-    axios.patch(`${url}profile/${userId}`, {
+    const body = {
       fullname: fullname || name,
-    }, config)
-    .then((res) => {
-      this.props.updateProfile({
-        name: fullname || name,
-        email: email,
-        facebook: facebook2 || facebook,
-        instagram: instagram2 || instagram,
-        twitter: twitter2 || twitter,
-      });
+    };
+
+    this.props._UPDATE_NAME({ userId, body, config });
+
+    if (!update_loading && !update_err) {
       ToastAndroid.show('Updated successfully', ToastAndroid.SHORT);
-    })
-    .catch(() => ToastAndroid.show('Something wrong try again', ToastAndroid.SHORT));
+    } else {
+      ToastAndroid.show('Something wrong, try again', ToastAndroid.SHORT);
+    }
   }
 
   render() {
@@ -136,7 +122,8 @@ const mapDispatchToProps = (dispatch) => {
   // Action
   return {
     // UPDATE PROFILE
-    updateProfile: (request) => dispatch(profile(request)),
+    _SET_PROFILE: (request) => dispatch(SET_PROFILE(request)),
+    _UPDATE_NAME: (request) => dispatch(UPDATE_NAME(request)),
   };
 };
 

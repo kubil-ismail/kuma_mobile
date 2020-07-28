@@ -8,19 +8,15 @@ import {
   View,
 } from 'react-native';
 import { Text } from 'react-native-elements';
-import axios from 'axios';
-// import Icon from 'react-native-vector-icons/FontAwesome5';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { book } from '../redux/actions/bookActions';
+import { SET_DETAIL_GENRE, SET_DETAIL_GENRE_NEXT } from '../redux/actions/bookActions';
 
 // import component
 import BookCard from '../components/book';
 import Error from '../components/error';
 import Loader from '../components/loader';
-
-const url = 'http://192.168.1.4:8000/';
 
 export class Genre extends Component {
   constructor(props) {
@@ -34,48 +30,50 @@ export class Genre extends Component {
       onSearch: true,
       isError: false,
     };
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (!loggedIn && !apikey && !userId) {
-      this.props.navigation.navigate('welcome');
-    }
   }
 
   fetchBook = (page = 1) => {
     const { genreId } = this.props.route.params;
-    axios.get(`${url}book/genre/${genreId}?limit=10&page=${page}`)
-      .then((res) => {
-        const { data } = res;
-        this.props.setBook({
-          data: data.data,
-          options: data.options,
-        });
-        this.setState({ isLoading: false });
-      })
-      .catch(() => this.setState({ isError: true }));
+    this.props._SET_DETAIL_GENRE({
+      genreId, page: page,
+    });
   };
+
+  nextPage = () => {
+    const { genre_book_options } = this.props.books;
+    if (genre_book_options.next) {
+      const { genreId } = this.props.route.params;
+      this.props._SET_DETAIL_GENRE_NEXT({
+        genreId, options: genre_book_options.next,
+      });
+    }
+  }
+
+  onError = () => {
+    this.setState({ isError: true, isLoading: false });
+  }
 
   componentDidMount = () => {
     this.fetchBook();
   }
 
   render() {
-    const { data } = this.props.books;
-    const { isError, isLoading } = this.state;
+    const { genre_book_data, book_genre_loading, book_genre_err } = this.props.books;
     return (
       <SafeAreaView style={styles.container}>
-        <Loader isLoading={isLoading} />
-        {isError && (
+        <Loader isLoading={book_genre_loading} />
+        {book_genre_err && (
           <Error />
         )}
-        {!isError && !isLoading && data.length === undefined && (
+        {!book_genre_err && !book_genre_loading && genre_book_data.length === undefined && (
           <View style={styles.center}>
             <Text>Book Not Found</Text>
           </View>
         )}
-        {!isError && !isLoading && data.length >= 1 && (
+        {!book_genre_err && !book_genre_loading && genre_book_data.length >= 1 && (
           <>
             <FlatList
-              data={data}
+              data={genre_book_data}
               renderItem={({ item }) => (
                 <BookCard
                   {...this.props}
@@ -85,8 +83,11 @@ export class Genre extends Component {
                   description={item.description}
                 />
               )}
-              showsHorizontalScrollIndicator={false}
               keyExtractor={item => item.id.toString()}
+              onRefresh={() => this.fetchBook()}
+              refreshing={book_genre_loading}
+              onEndReached={this.nextPage}
+              onEndReachedThreshold={0.5}
             />
           </>
         )}
@@ -122,8 +123,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
-    // Books
-    setBook: (request) => dispatch(book(request)),
+    // _SET_DETAIL_GENRE
+    _SET_DETAIL_GENRE: (request) => dispatch(SET_DETAIL_GENRE(request)),
+    // _SET_DETAIL_GENRE_NEXT
+    _SET_DETAIL_GENRE_NEXT: (request) => dispatch(SET_DETAIL_GENRE_NEXT(request)),
   };
 };
 

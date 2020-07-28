@@ -11,13 +11,10 @@ import {
 } from 'react-native';
 import { Avatar, Button, Text, Input } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { profile } from '../redux/actions/profileActions';
-
-const url = 'http://192.168.1.4:8000/';
+import { SET_PROFILE, UPDATE_PROFILE } from '../redux/actions/profileActions';
 
 export class Update extends Component {
   constructor(props) {
@@ -31,37 +28,36 @@ export class Update extends Component {
       instagram2: null,
       twitter2: null,
     };
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (!loggedIn && !apikey && !userId) {
-      this.props.navigation.navigate('welcome');
-    }
   }
 
   onUpdate = () => {
     const { apikey, userId } = this.props.auth;
-    const { name, email, facebook, instagram, twitter } = this.props.profile;
+    const {
+      facebook,
+      instagram,
+      twitter,
+      update_loading,
+      update_err,
+    } = this.props.profile;
     const { facebook2, instagram2, twitter2 } = this.state;
+    const body = {
+      facebook: facebook2 || facebook,
+      instagram: instagram2 || instagram,
+      twitter: twitter2 || twitter,
+    };
     const config = {
       headers: {
         Authorization: apikey,
       },
     };
-    axios.patch(`${url}sosmed/${userId}`,{
-      facebook: facebook2 || facebook,
-      instagram: instagram2 || instagram,
-      twitter: twitter2 || twitter,
-    }, config)
-    .then(() => {
-      this.props.updateProfile({
-        name: name,
-        email: email,
-        facebook: facebook2 || facebook,
-        instagram: instagram2 || instagram,
-        twitter: twitter2 || twitter,
-      });
+    this.props._UPDATE_PROFILE({
+      userId, body, config,
+    });
+    if (!update_loading && !update_err) {
       ToastAndroid.show('Updated successfully', ToastAndroid.SHORT);
-    })
-    .catch(() => ToastAndroid.show('Something wrong try again', ToastAndroid.SHORT));
+    } else {
+      ToastAndroid.show('Something wrong, try again', ToastAndroid.SHORT);
+    }
   }
 
   render() {
@@ -143,8 +139,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
+    // _SET_PROFILE
+    _SET_PROFILE: (request) => dispatch(SET_PROFILE(request)),
     // UPDATE PROFILE
-    updateProfile: (request) => dispatch(profile(request)),
+    _UPDATE_PROFILE: (request) => dispatch(UPDATE_PROFILE(request)),
   };
 };
 

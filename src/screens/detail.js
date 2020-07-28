@@ -12,61 +12,49 @@ import {
 } from 'react-native';
 import { ButtonGroup, Button, Card, Image, Input, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { detail } from '../redux/actions/bookActions';
+import { SET_DETAIL, SET_REVIEW, ADD_REVIEW } from '../redux/actions/bookActions';
+import { ADD_FAVORITE } from '../redux/actions/favoriteActions';
+import { SET_FAVORITE } from '../redux/actions/favoriteActions';
 
 // Import component
 import Error from '../components/error';
 import Loader from '../components/loader';
 
-const url = 'http://192.168.1.4:8000/';
+const url = 'http://18.209.178.237:8000/';
 
 export class Detail extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
-      reviews: [],
-      options: [],
-      isLoading: true,
-      isError: false,
       InputReview: null,
+      addFavorite: true,
+      addReview: true,
     };
-
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (!loggedIn && !apikey && !userId) {
-      this.props.navigation.navigate('welcome');
-    }
   }
 
   fetchBook = () => {
     const { bookId } = this.props.route.params;
-    axios.get(`${url}book/${bookId}`)
-    .then((res) => {
-      const { data } = res;
-      this.props.setDetail({
-        data: data.data[0],
-      });
-      this.setState({
-        isLoading: false,
-        data: this.props.details,
-       });
-    }).catch(() => this.setState({ isError: true }));
+    this.props._SET_DETAIL({ bookId });
   };
 
   fetchReview = () => {
     const { bookId } = this.props.route.params;
-    axios.get(`${url}review?book_id=${parseInt(bookId, 10)}&limit=5`)
-    .then((res) => {
-      const { data } = res;
-      this.setState({
-        reviews: data.data,
-        isLoading: false,
-      });
-    }).catch(() => this.setState({ isError: true }));
+    this.props._SET_REVIEW({ bookId });
+  };
+
+  fetchFavorite = () => {
+    const { apikey, userId } = this.props.auth;
+    const config = {
+      headers: {
+        Authorization: apikey,
+      },
+    };
+    this.props._SET_FAVORITE({
+      userId, config,
+    });
   };
 
   addFavorite = () => {
@@ -77,34 +65,51 @@ export class Detail extends Component {
         Authorization: apikey,
       },
     };
-
-    axios.post(`${url}favorite`, { book_id: bookId, user_id: userId}, config)
-    .then(() => ToastAndroid.show('Book add to favorite list', ToastAndroid.SHORT))
-    .catch(() => ToastAndroid.show('Something wrong. Try again', ToastAndroid.SHORT));
+    const body = {
+      book_id: bookId, user_id: userId,
+    };
+    this.props._ADD_FAVORITE({ body, config });
+    const { addFavorite } = this.state;
+    const { add_loading, add_err } = this.props.favorite;
+    if (addFavorite && add_loading === false && add_err === false) {
+      ToastAndroid.show('Book add to favorite list', ToastAndroid.SHORT);
+      this.fetchFavorite();
+      this.setState({ addFavorite: false });
+    } else {
+      ToastAndroid.show('Something wrong. Try again', ToastAndroid.SHORT);
+    }
   }
 
   addReview = () => {
     const { InputReview } = this.state;
-    const { apikey, userId } = this.props.auth;
-    const { bookId } = this.props.route.params;
-    const config = {
-      headers: {
-        Authorization: apikey,
-      },
-    };
+    if (InputReview) {
+      const { apikey, userId } = this.props.auth;
+      const { bookId } = this.props.route.params;
+      const config = {
+        headers: {
+          Authorization: apikey,
+        },
+      };
+      const body = {
+        book_id: bookId,
+        user_id: userId,
+        review: InputReview,
+        rating: 10,
+      };
 
-    axios.post(`${url}review`, {
-      book_id: bookId,
-      user_id: userId,
-      review: InputReview,
-      rating: 10,
-    }, config)
-    .then(() => {
-      ToastAndroid.show('Review success', ToastAndroid.SHORT);
-      this.setState({ InputReview: '' });
-      this.fetchReview();
-    })
-    .catch(() => ToastAndroid.show('Something wrong. Try again', ToastAndroid.SHORT));
+      this.props._ADD_REVIEW({ body, config });
+      const { addReview } = this.state;
+      const { review_loading, review_err } = this.props.book;
+      if (addReview && review_loading === false && review_err === false) {
+        ToastAndroid.show('Review success', ToastAndroid.SHORT);
+        this.setState({ InputReview: null, addFavorite: false });
+        this.fetchReview();
+      } else {
+        ToastAndroid.show('Something wrong. Try again', ToastAndroid.SHORT);
+      }
+    } else {
+      ToastAndroid.show('Reviews cannot be empty', ToastAndroid.SHORT);
+    }
   }
 
   componentDidMount = () => {
@@ -113,18 +118,20 @@ export class Detail extends Component {
   }
 
   render() {
-    const { isError, isLoading, data, reviews } = this.state;
+    const book_detail = this.props.detail,
+    book_review = this.props.review;
+
     return (
       <SafeAreaView style={styles.container}>
-        <Loader isLoading={isLoading} />
-        {isError && (
+        <Loader isLoading={this.props.bookLoading} />
+        {this.props.bookErr && (
           <Error />
         )}
 
-        {!isError && !isLoading && (
+        {!this.props.bookErr && !this.props.bookLoading && (
           <ScrollView>
             <Image
-              source={{ uri: `${url}${data.cover}` }}
+              source={{ uri: `${url}${book_detail.cover}` }}
               style={styles.bg}
               resizeMode={'cover'}
               PlaceholderContent={<ActivityIndicator />}
@@ -132,32 +139,32 @@ export class Detail extends Component {
 
             <View style={styles.body}>
               <Image
-                source={{ uri: `${url}${data.cover}` }}
+                source={{ uri: `${url}${book_detail.cover}` }}
                 style={styles.cover}
                 resizeMode="center"
                 PlaceholderContent={<ActivityIndicator />}
               />
               {/* eslint-disable-next-line react-native/no-inline-styles */}
-              <Text h3 style={{ textAlign: 'center' }}>{data.name}</Text>
+              <Text h3 style={{ textAlign: 'center' }}>{book_detail.name}</Text>
               {/* eslint-disable-next-line react-native/no-inline-styles */}
-              <Text style={{ marginVertical: 10 }}>{data.author}</Text>
+              <Text style={{ marginVertical: 10 }}>{book_detail.author}</Text>
               <ButtonGroup
                 // eslint-disable-next-line react-native/no-inline-styles
                 buttonContainerStyle={{ backgroundColor: '#e5f9fd' }}
                 buttons={[
-                  data.genre,
-                  data.status,
-                  data.language,
+                  book_detail.genre || '',
+                  book_detail.status || '',
+                  book_detail.language || '',
                 ]}
               />
               {/* About This Book */}
               <Text h4 style={styles.desc}>About</Text>
-              <Text style={styles.desc}>{data.description}</Text>
+              <Text style={styles.desc}>{book_detail.description}</Text>
 
             </View>
             {/* Review */}
             <Text h4 style={styles.desc}>Review</Text>
-            {reviews.length >= 1 && reviews.map((val) => (
+            {book_review.length >= 1 && book_review.map((val) => (
               <Card
                 key={val.id}
                 title={val.fullname}
@@ -227,6 +234,7 @@ const styles = StyleSheet.create({
     color: '#636d7b',
     paddingHorizontal: 10,
     textAlign: 'center',
+    fontFamily: 'NunitoSans-Regular',
   },
   review: {
     textAlign: 'left',
@@ -256,7 +264,13 @@ const mapStateToProps = (state) => {
   // Redux Store --> Component
   return {
     auth: state.authReducer,
-    details: state.bookReducer.detail,
+    book: state.bookReducer,
+    detail: state.bookReducer.book_detail,
+    review: state.bookReducer.book_review,
+    favorite: state.favoriteReducer,
+    bookLoading: state.bookReducer.detail_loading,
+    bookErr: state.bookReducer.detail_err,
+    reviewLoading: state.bookReducer.review_loading,
   };
 };
 
@@ -265,7 +279,14 @@ const mapDispatchToProps = (dispatch) => {
   // Action
   return {
     // Detail
-    setDetail: (trueFalse) => dispatch(detail(trueFalse)),
+    _SET_DETAIL: (request) => dispatch(SET_DETAIL(request)),
+    // Revies
+    _SET_REVIEW: (request) => dispatch(SET_REVIEW(request)),
+    _ADD_REVIEW: (request) => dispatch(ADD_REVIEW(request)),
+    // Favorite
+    _ADD_FAVORITE: (request) => dispatch(ADD_FAVORITE(request)),
+    // SET_FAVORITE
+    _SET_FAVORITE: (data) => dispatch(SET_FAVORITE(data)),
   };
 };
 

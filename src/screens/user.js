@@ -11,66 +11,32 @@ import {
 } from 'react-native';
 import { Avatar, ListItem, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { profile } from '../redux/actions/profileActions';
-import { login } from '../redux/actions/authActions';
+import { SET_PROFILE } from '../redux/actions/profileActions';
+import { logout } from '../redux/actions/authActions';
 
 // Import component
 import Header from '../components/header';
 import Error from '../components/error';
 import Loader from '../components/loader';
 
-const url = 'http://192.168.1.4:8000/';
-
 export class User extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isLoading: true,
-      isError: false,
-      userId: 30,
-      profile: [],
-    };
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (!loggedIn && !apikey && !userId) {
-      this.props.navigation.navigate('welcome');
-    }
-  }
-
   fetchProfile = () => {
     const { apikey, userId } = this.props.auth;
-    axios.get(`${url}profile/${userId}`, {
+    const config = {
       headers: {
         Authorization: apikey,
       },
-    })
-    .then((res) => {
-      const { data } = res.data;
-      this.props.updateProfile({
-        name: data[0].fullname,
-        email: data[0].email,
-        facebook: data[0].facebook,
-        instagram: data[0].instagram,
-        twitter: data[0].twitter,
-      });
-      this.setState({
-        isLoading: false,
-        isError: false,
-      });
-    })
-    .catch(() => this.setState({ isError: true }));
+    };
+    this.props._SET_PROFILE({
+      userId, config,
+    });
   }
 
   onLogout = () => {
-    this.props.reduxLogin({
-      status: false,
-      apiKey: null,
-      userId: null,
-    });
-    this.props.navigation.navigate('welcome');
+    this.props._logout();
   }
 
   update = () => {
@@ -82,16 +48,23 @@ export class User extends Component {
   }
 
   render() {
-    const { isError, isLoading } = this.state;
-    const { name, email, facebook, instagram, twitter } = this.props.profile;
+    const {
+      name,
+      email,
+      facebook,
+      instagram,
+      twitter,
+      profile_loading,
+      profile_err,
+    } = this.props.profile;
     return (
       <SafeAreaView style={styles.container}>
-        <Loader isLoading={isLoading} />
+        <Loader isLoading={profile_loading} />
         <Header />
-        {isError && (
+        {profile_err && (
           <Error />
         )}
-        {!isError && !isLoading && (
+        {!profile_err && !profile_loading && (
           <ScrollView>
             <View style={styles.body}>
               <Avatar
@@ -208,8 +181,9 @@ const mapDispatchToProps = (dispatch) => {
   // Action
   return {
     // UPDATE PROFILE
-    updateProfile: (request) => dispatch(profile(request)),
-    reduxLogin: (trueFalse) => dispatch(login(trueFalse)),
+    _SET_PROFILE: (request) => dispatch(SET_PROFILE(request)),
+    // Logout
+    _logout: (trueFalse) => dispatch(logout(trueFalse)),
   };
 };
 

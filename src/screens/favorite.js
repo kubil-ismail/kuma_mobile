@@ -13,7 +13,7 @@ import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { favorite } from '../redux/actions/favoriteActions';
+import { SET_FAVORITE, SET_FAVORITE_NEXT } from '../redux/actions/favoriteActions';
 
 // Import component
 import Header from '../components/header';
@@ -23,60 +23,32 @@ import Loader from '../components/loader';
 const url = 'http://192.168.1.4:8000/';
 
 export class Favorite extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      data: [],
-      options: [],
-      userId: 30,
-      isLoading: true,
-      isError: false,
-    };
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (!loggedIn && !apikey && !userId) {
-      this.props.navigation.navigate('welcome');
-    }
-  }
-
   fetchFavorite = () => {
     const { apikey, userId } = this.props.auth;
-    axios.get(`${url}profile/favorite/${userId}?limit=15`,{
+    const config = {
       headers: {
         Authorization: apikey,
       },
-    })
-    .then((res) => {
-      const { data } = res;
-      this.setState({
-        data: data.data,
-        options: data.options,
-        isLoading: false,
-        isError: false,
-      });
-    })
-    .catch(() => this.setState({isError: true}));
+    };
+    this.props._SET_FAVORITE({
+      userId, config,
+    });
   };
 
   nextPage = () => {
-    const { options } = this.state;
-    if (options.next) {
-      this.setState({ isLoading: true });
+    const { favorite_option } = this.props.favorites;
+    if (favorite_option.next) {
       const { apikey, userId } = this.props.auth;
-      axios.get(`${url}profile/favorite/${userId}?${options.next}`,{
+      const config = {
         headers: {
           Authorization: apikey,
         },
-      })
-      .then((res) => {
-        const { data } = res;
-        this.setState({
-          data: data.data,
-          options: data.options,
-          isLoading: false,
-          isError: false,
-        });
-      })
-      .catch(() => this.setState({ isError: true }));
+      };
+      this.props._SET_FAVORITE_NEXT({
+        userId,
+        config,
+        options: favorite_option.next,
+      });
     }
   }
 
@@ -121,19 +93,19 @@ export class Favorite extends Component {
   }
 
   render() {
-    const { data, isLoading, isError } = this.state;
+    const { favorite_data, favorite_loading, favorite_err } = this.props.favorites;
     return (
       <SafeAreaView style={styles.container}>
-        <Loader isLoading={isLoading} />
+        <Loader isLoading={favorite_loading} />
         <Header />
-        {isError && (
-          <Error/>
+        {favorite_data.length === undefined && (
+          <Error msg="Favorite book not found"/>
         )}
 
-        {!isError && (
+        {!favorite_err && favorite_data.length >= 1 && (
           <FlatList
-            data={data}
-            renderItem={({ item }) => (
+            data={favorite_data}
+            renderItem={({item}) => (
               <ListItem
                 key={item.id}
                 title={item.name}
@@ -143,14 +115,14 @@ export class Favorite extends Component {
                   bookId: item.id,
                   bookName: item.name,
                 })}
-                onLongPress={() => this.showAlert(item.book_favorites_id)}
                 bottomDivider
+                onLongPress={() => this.showAlert(item.book_favorites_id)}
                 chevron
               />
             )}
             keyExtractor={item => item.book_favorites_id.toString()}
             onRefresh={() => this.fetchFavorite()}
-            refreshing={isLoading}
+            refreshing={favorite_loading}
             onEndReached={this.nextPage}
             onEndReachedThreshold={0.5}
             style={styles.full}
@@ -168,11 +140,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: deviceHeight,
   },
-  svg: {
-    width: 250,
-    height: 200,
-    marginVertical: 30,
-  },
   full: {
     flex: 1,
     padding: 10,
@@ -184,6 +151,7 @@ const mapStateToProps = (state) => {
   // Redux Store --> Component
   return {
     auth: state.authReducer,
+    favorites: state.favoriteReducer,
   };
 };
 
@@ -191,8 +159,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
-    // Login
-    setFavorite: (data) => dispatch(favorite(data)),
+    // SET_FAVORITE
+    _SET_FAVORITE: (data) => dispatch(SET_FAVORITE(data)),
+    // SET_FAVORITE NEXT
+    _SET_FAVORITE_NEXT: (data) => dispatch(SET_FAVORITE_NEXT(data)),
   };
 };
 

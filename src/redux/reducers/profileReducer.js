@@ -6,17 +6,112 @@ const initialState = {
   facebook: '-',
   instagram: '-',
   twitter: '-',
+  profile_loading: false,
+  profile_err: false,
+  update_loading: false,
+  update_err: false,
+  update_msg: null,
 };
 
 // Reducers (Modifies The State And Returns A New State)
-const authReducer = (state = initialState, action) => {
+const profileReducer = (state = initialState, action) => {
   switch (action.type) {
-    // PATCH
-    case 'PATCH': {
-      const { name, facebook, instagram, twitter } = action.payload;
+    // SET_PROFILE
+    case 'SET_PROFILE_PENDING': {
       return {
         ...state,
-        ...{ name, facebook, instagram, twitter },
+        ...{
+          profile_loading: true,
+          update_status: false,
+         },
+      };
+    }
+    case 'SET_PROFILE_REJECTED': {
+      return {
+        ...state,
+        ...{
+          profile_loading: false,
+          profile_err: true,
+         },
+      };
+    }
+    case 'SET_PROFILE_FULFILLED': {
+      const { data } = action.payload.data;
+      return {
+        ...state,
+        ...{
+          name: data[0].fullname,
+          email: data[0].email,
+          facebook: data[0].facebook,
+          instagram: data[0].instagram,
+          twitter: data[0].twitter,
+          profile_loading: false,
+          profile_err: false,
+        },
+      };
+    }
+
+    // UPDATE PROFILE
+    case 'UPDATE_PROFILE_PENDING': {
+      return {
+        ...state,
+        ...{
+          update_loading: true,
+          update_err: false,
+        },
+      };
+    }
+    case 'UPDATE_PROFILE_REJECTED': {
+      return {
+        ...state,
+        ...{
+          update_loading: false,
+          update_err: true,
+        },
+      };
+    }
+    case 'UPDATE_PROFILE_FULFILLED': {
+      const { data } = action.payload.data;
+      return {
+        ...state,
+        ...{
+          update_loading: false,
+          update_err: false,
+          facebook: data[0].facebook,
+          instagram: data[0].instagram,
+          twitter: data[0].twitter,
+        },
+      };
+    }
+
+    // UPDATE NAME
+    case 'UPDATE_NAME_PENDING': {
+      return {
+        ...state,
+        ...{
+          update_loading: true,
+          update_err: false,
+        },
+      };
+    }
+    case 'UPDATE_NAME_REJECTED': {
+      return {
+        ...state,
+        ...{
+          update_loading: false,
+          update_err: true,
+        },
+      };
+    }
+    case 'UPDATE_NAME_FULFILLED': {
+      const { data } = action.payload.data;
+      return {
+        ...state,
+        ...{
+          update_loading: false,
+          update_err: false,
+          name: data[0].fullname,
+        },
       };
     }
     // Default
@@ -27,4 +122,4 @@ const authReducer = (state = initialState, action) => {
 };
 
 // Exports
-export default authReducer;
+export default profileReducer;

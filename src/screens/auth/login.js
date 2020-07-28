@@ -11,14 +11,12 @@ import {
   ToastAndroid,
 } from 'react-native';
 import { Button, Image, Input  } from 'react-native-elements';
-import axios from 'axios';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
 import { login } from '../../redux/actions/authActions';
 
 import svg from '../../assets/image/undraw_bookshelves_xekd.png';
-const url = 'http://192.168.1.4:8000/';
 
 export class Login extends Component {
   constructor(props) {
@@ -26,47 +24,19 @@ export class Login extends Component {
     this.state = {
       email: null,
       password: null,
-      isLoading: false,
-      isError: false,
-      errorMsg: null,
     };
-
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (loggedIn && apikey && userId) {
-      this.props.navigation.navigate('home');
-    }
   }
 
   onLogin = () => {
     const { email, password } = this.state;
     if (email !== null && password !== null) {
-      axios.post(`${url}auth/login`, {
-        email, password,
-      }).then((res) => {
-        const { data } = res.data;
-        if (data.apiKey) {
-          this.props.reduxLogin({
-            status: true,
-            apikey: data.apiKey,
-            userId: data.userId,
-          });
-          this.props.navigation.navigate('home');
-        } else {
-          this.props.reduxLogin({
-            status: false,
-            apiKey: null,
-            userId: null,
-          });
-        }
-      })
-      .catch((err) => {
-        const { data } = err.response;
-        ToastAndroid.show(data.message, ToastAndroid.SHORT);
-        this.setState({
-          isLoading: false,
-          isError: true,
-        });
-      });
+      this.setState({ isLoading: true });
+      const body = { email, password };
+      this.props.reduxLogin({ body });
+      const { isLoading, isError, errMsg } = this.props.auth;
+      if (isLoading === false && isError === true) {
+        ToastAndroid.show(errMsg, ToastAndroid.SHORT);
+      }
     } else {
       ToastAndroid.show('Email & Password must filled', ToastAndroid.SHORT);
       this.setState({
@@ -77,7 +47,7 @@ export class Login extends Component {
   }
 
   render() {
-    const { errorMsg, isLoading } = this.state;
+    const { isLoading } = this.props.auth;
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView>
@@ -90,9 +60,6 @@ export class Login extends Component {
             placeholder="Email address"
             keyboardType={'email-address'}
             onChangeText={(e) => this.setState({ email: e })}
-            // eslint-disable-next-line react-native/no-inline-styles
-            errorStyle={{ color: 'red' }}
-            errorMessage={errorMsg}
             leftIcon={
               <Icon
                 name="envelope"

@@ -2,37 +2,248 @@
 
 // Initial State
 const initialState = {
-  data: [],
-  options: [],
-  detail: [],
-  isLoading: true,
-  isError: false,
-  errMsg: null,
+  book_data: [],
+  book_option: [],
+  book_detail: [],
+  book_review: [],
+  search_book: [],
+  search_option: [],
+  genre_book_data: [],
+  genre_book_options: [],
+  book_loading: false,
+  book_err: false,
+  book_msg: null,
+  search_loading: false,
+  search_err: false,
+  search_msg: null,
+  detail_loading: false,
+  detail_err: false,
+  review_loading: false,
+  review_err: false,
+  book_genre_loading: false,
+  book_genre_err: false,
 };
 
 // Reducers (Modifies The State And Returns A New State)
 const bookReducer = (state = initialState, action) => {
   switch (action.type) {
     // SET BOOKS
-    case 'SET': {
-      const { data, options } = action.payload;
+    case 'SET_BOOK_PENDING': {
       return {
         // State
         ...state,
         // Redux Store
-        data, options,
+        book_loading: true,
       };
     }
-    // SET BOOKS
-    case 'DETAIL': {
-      const { data } = action.payload;
+    case 'SET_BOOK_REJECTED': {
       return {
         // State
         ...state,
         // Redux Store
-        detail: data,
+        book_loading: false,
+        book_err: true,
+        book_msg: "Can't get book from server",
       };
     }
+    case 'SET_BOOK_FULFILLED': {
+      const { data, options } = action.payload.data;
+      return {
+        // State
+        ...state,
+        // Redux Store
+        book_loading: false,
+        book_data: data,
+        book_option: options,
+      };
+    }
+    // ==============================================================
+
+    // SET DETAIL
+    case 'SET_DETAIL_PENDING': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        detail_loading: true,
+      };
+    }
+    case 'SET_DETAIL_REJECTED': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        detail_loading: false,
+        detail_err: true,
+      };
+    }
+    case 'SET_DETAIL_FULFILLED': {
+      const { data } = action.payload.data;
+      return {
+        // State
+        ...state,
+        // Redux Store
+        book_detail: data[0],
+        detail_loading: false,
+        detail_err: false,
+      };
+    }
+    // ==============================================================
+
+    // DETAIL_GENRE
+    case 'SET_DETAIL_GENRE_PENDING': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        book_genre_loading: true,
+      };
+    }
+    case 'SET_DETAIL_GENRE_REJECTED': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        book_genre_loading: false,
+        book_genre_err: true,
+      };
+    }
+    case 'SET_DETAIL_GENRE_FULFILLED': {
+      const { data, options } = action.payload.data;
+      return {
+        // State
+        ...state,
+        // Redux Store
+        genre_book_data: data,
+        genre_book_options: options,
+        book_genre_loading: false,
+      };
+    }
+    // ==============================================================
+
+    // DETAIL_GENRE_NEXT
+    case 'SET_DETAIL_GENRE_NEXT_FULFILLED': {
+      const { data, options } = action.payload.data;
+      return {
+        // State
+        ...state,
+        // Redux Store
+        genre_book_data: [...state.genre_book_data, ...data],
+        genre_book_options: options,
+        book_genre_loading: false,
+      };
+    }
+    // ==============================================================
+
+    // SET REVIEWS
+    case 'SET_REVIEW_PENDING': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        review_loading: true,
+        review_err: false,
+      };
+    }
+    case 'SET_REVIEW_REJECTED': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        review_err: true,
+        review_loading: false,
+      };
+    }
+    case 'SET_REVIEW_FULFILLED': {
+      const { data } = action.payload.data;
+      return {
+        // State
+        ...state,
+        // Redux Store
+        book_review: data,
+        review_err: false,
+        review_loading: false,
+      };
+    }
+    // ==============================================================
+
+    // SET SEARCH
+    case 'SET_SEARCH_PENDING': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        search_loading: true,
+      };
+    }
+    case 'SET_SEARCH_REJECTED': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        search_loading: false,
+        search_err: true,
+        search_msg: 'Book not found',
+      };
+    }
+    case 'SET_SEARCH_FULFILLED': {
+      const { data, options } = action.payload.data;
+      return {
+        // State
+        ...state,
+        // Redux Store
+        search_loading: false,
+        search_err: false,
+        search_book: data,
+        search_option: options,
+      };
+    }
+    // ==============================================================
+
+    // SET SEARCH NEXT
+    case 'SET_SEARCH_NEXT_FULFILLED': {
+      const { data, options } = action.payload.data;
+      return {
+        // State
+        ...state,
+        // Redux Store
+        search_loading: false,
+        search_err: false,
+        search_book: [...state.search_book, ...data],
+        search_option: options,
+      };
+    }
+    // ==============================================================
+
+    // ADD REVIEW
+    case 'ADD_REVIEW_PENDING': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        review_loading: true,
+        review_err: false,
+      };
+    }
+    case 'ADD_REVIEW_REJECTED': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        review_loading: false,
+        review_err: true,
+      };
+    }
+    case 'ADD_REVIEW_FULFILLED': {
+      return {
+        // State
+        ...state,
+        // Redux Store
+        review_loading: false,
+        review_err: false,
+      };
+    }
+
     // Default
     default: {
       return state;

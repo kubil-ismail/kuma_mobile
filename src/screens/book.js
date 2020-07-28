@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-/* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
 import {
   Dimensions,
@@ -8,72 +7,29 @@ import {
   StyleSheet,
   ScrollView,
   View,
-  TouchableOpacity,
 } from 'react-native';
-import { Badge, Text } from 'react-native-elements';
-import axios from 'axios';
-// import Icon from 'react-native-vector-icons/FontAwesome5';
+import { Text } from 'react-native-elements';
 
 // Imports: Redux Actions
 import { connect } from 'react-redux';
-import { book } from '../redux/actions/bookActions';
+import { SET_BOOK } from '../redux/actions/bookActions';
+import { SET_GENRE } from '../redux/actions/genreActions';
 
 // import component
 import BookCard from '../components/book';
+import GenreButton from '../components/genre';
 import Header from '../components/header';
-import Error from '../components/error';
 import Loader from '../components/loader';
-
-const url = 'http://192.168.1.4:8000/';
+import Error from '../components/error';
 
 export class Book extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      search: '',
-      data: [],
-      options: [],
-      genre: [],
-      isLoading: true,
-      onSearch: true,
-      isError: false,
-    };
-    const { loggedIn, apikey, userId } = this.props.auth;
-    if (!loggedIn && !apikey && !userId) {
-      this.props.navigation.navigate('welcome');
-    }
-  }
-
-  fetchBook = (page = 1) => {
-    axios.get(`${url}book?limit=10&page=${page}`)
-    .then((res) => {
-      const { data } = res;
-      this.setState({
-        data: data.data,
-        options: data.options,
-        isLoading: false,
-      });
-    })
-    .catch(() => this.setState({ isError: true }));
+  fetchBook = async (page = 1) => {
+    this.props._SET_BOOK({ page: page });
   };
 
   fetchGenre = () => {
-    axios.get(`${url}genre`)
-    .then((res) => {
-      const { data } = res;
-      this.setState({
-        genre: data.data,
-      });
-    })
-    .catch(() => this.setState({ isError: true }));
+    this.props._SET_GENRE();
   };
-
-  viewGenre = (id, name) => {
-    this.props.navigation.navigate('Genre',{
-      genreId: id,
-      genreName: name,
-    });
-  }
 
   componentDidMount = () => {
     this.fetchBook();
@@ -81,22 +37,24 @@ export class Book extends Component {
   }
 
   render() {
-    const { isError, isLoading, data, genre } = this.state;
+    const { genre_data, genre_loading, genre_err } = this.props.genres;
+    const { book_data, book_loading, book_err } = this.props.books;
     return (
       <SafeAreaView style={styles.container}>
-        <Loader isLoading={isLoading} />
+        <Loader isLoading={book_loading || genre_loading} />
         <Header />
-        {isError && (
+        {/* Error Page */}
+        {genre_err && book_err && (
           <Error />
         )}
-        {!isError && !isLoading && (
-          <>
-            <ScrollView style={styles.body}>
-              {/* Popular Books */}
+        <ScrollView style={styles.body}>
+          {/* Popular Books */}
+          {!book_loading && !book_err && (
+            <>
               <Text h3 style={styles.title}>Popular Book</Text>
               <FlatList
                 horizontal
-                data={data}
+                data={book_data}
                 renderItem={({ item }) => (
                   <BookCard
                     {...this.props}
@@ -110,31 +68,31 @@ export class Book extends Component {
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={item => item.id.toString()}
               />
-              {/* All Genres */}
+            </>
+          )}
+          {/* All Genres */}
+          {!genre_loading && !genre_err && (
+            <>
               <View style={styles.divider}/>
               <Text h3 style={styles.title}>Genre Book</Text>
               <FlatList
                 horizontal
-                data={genre}
+                data={genre_data}
                 renderItem={({ item }) => (
-                  <TouchableOpacity
-                    onPress={() => this.viewGenre(item.id, item.name)}
-                  >
-                    <Badge
-                      value={item.name}
-                      badgeStyle={{ padding: 15 }}
-                      containerStyle={{ padding: 5 }}
-                    />
-                  </TouchableOpacity>
+                  <GenreButton
+                    {...this.props}
+                    id={item.id}
+                    name={item.name}
+                  />
                 )}
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={item => item.id.toString()}
               />
-              <View style={styles.divider} />
-              <View style={styles.divider} />
-            </ScrollView>
-          </>
-        )}
+            </>
+          )}
+          <View style={styles.divider} />
+          <View style={styles.divider} />
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -168,6 +126,8 @@ const mapStateToProps = (state) => {
   // Redux Store --> Component
   return {
     auth: state.authReducer,
+    books: state.bookReducer,
+    genres: state.genreReducer,
   };
 };
 
@@ -175,8 +135,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   // Action
   return {
-    // Books
-    setBooks: (trueFalse) => dispatch(book(trueFalse)),
+    // SET_BOOK
+    _SET_BOOK: (request) => dispatch(SET_BOOK(request)),
+    // SET_GENRE
+    _SET_GENRE: (request) => dispatch(SET_GENRE(request)),
   };
 };
 
