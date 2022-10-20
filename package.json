@@ -26,7 +26,7 @@
     "react-native-global-font": "^1.0.2",
     "react-native-image-picker": "^2.3.2",
     "react-native-loading-spinner-overlay": "^1.1.0",
-    "react-native-reanimated": "^1.9.0",
+    "react-native-reanimated": "^2.10.0",
     "react-native-safe-area-context": "^3.0.7",
     "react-native-screens": "^2.9.0",
     "react-native-smooth-pincode-input": "^1.0.9",
